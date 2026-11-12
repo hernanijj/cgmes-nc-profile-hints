@@ -1,0 +1,19 @@
+{
+  "name": "cgmes-notepadpp",
+  "version": "0.1.12",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.cjs",
+    "test": "node scripts/build.cjs && node out/test/adapter.test.js && node out/test/core.test.js",
+    "test:adapter": "node scripts/build.cjs && node out/test/adapter.test.js"
+  },
+  "dependencies": {
+    "n3": "^2.13.12"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3",
+    "@types/node": "^20.19.43",
+    "@types/n3": "^1.26.4"
+  }
+}

@@ -1,0 +1,304 @@
+{
+  "$schema": "../../../manifest.schema.json",
+  "format": "gridscope-validation-package",
+  "format_version": 1,
+  "family": "NCP",
+  "release": "2.2",
+  "provider": "ENTSO-E",
+  "status": "installed-unverified",
+  "namespaces": {
+    "cim": "http://iec.ch/TC57/CIM100#",
+    "nc": "http://entsoe.eu/ns/nc#"
+  },
+  "source": {
+    "url": null,
+    "retrieved_at": null,
+    "license": "Apache-2.0 declared in supplied RDFS metadata"
+  },
+  "inference": "rdfs",
+  "files": [
+    {
+      "path": "schema/AssessedElementProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "cc6948c254ca166bc610655e98f98f3a553e863f6668afa09a7766e0d604890f"
+    },
+    {
+      "path": "schema/AvailabilityScheduleProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "d93ddd0b8e10dd3c64d9ae9759492cf622a51f846e1625c5f9823f3c18e5684c"
+    },
+    {
+      "path": "schema/ContingencyProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "7bed325e3e37fda49c261491b0f07983b5371ea253049140ecee62301a4526e8"
+    },
+    {
+      "path": "schema/DocumentHeaderProfile_v2_2_RDFSv2020_10May2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "ca6ca52496b9dbd3434a44e855d9689642b64ff343cae034a4439f2073a1c222"
+    },
+    {
+      "path": "schema/DocumentHeaderProfile_v2_3_RDFSv2030_19Oct2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "4ee33cacaba1b69fcf5fcca0163b8b4c1b35fbdd5f4cb3d007d8d67415a93205"
+    },
+    {
+      "path": "schema/EquipmentReliabilityProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "9b5630d3cf4250729df4832289923385fc0e1cb5c104faf78df9a3740d538fc7"
+    },
+    {
+      "path": "schema/GridDisturbanceProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "5f24c04b025e4502780923b6186dc14d7e724b53bed2924fe1b4007434eb6ef2"
+    },
+    {
+      "path": "schema/ImpactAssessmentMatrixProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "1199fdefc5dcc83d8e48eae9a83be1ba66074e143ea5d29fc01bb7ffe91fb07a"
+    },
+    {
+      "path": "schema/MonitoringAreaProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "74a4e8284d1f1a7f3922c7ba69703f8d581c121a25416ce14ea86fca1cd0228b"
+    },
+    {
+      "path": "schema/ObjectRegistryProfile_v2_1_1_RDFSv2020_12Jun2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "9f94178ff485492db2f614001ff31f6454aa15fe4071813792dc5b42fd24115c"
+    },
+    {
+      "path": "schema/ObjectRegistryProfile_v2_1_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "f1120bd96d41026fa4b93d01e9b9c65d9e2d2d75ee3e29e45f7f66f3a68264e8"
+    },
+    {
+      "path": "schema/PowerScheduleProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "37d125b4c986530becbfb18858749af7b269ad65e3b2534d7f429767ea30e5f5"
+    },
+    {
+      "path": "schema/PowerSystemProjectProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "c13e7dfe1226c3cf985a69ba7593802cf878242899bebc8b2cd7790b23f59cf8"
+    },
+    {
+      "path": "schema/RemedialActionProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "2624dfc7ffa5c52288d66d6bb179774f27816d67c9fa72d0fe36c20d509f5f39"
+    },
+    {
+      "path": "schema/RemedialActionScheduleProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "190691ccaecb821d992924af8d197f71a6a4d1c53eef6646fd1e4bc601259b1c"
+    },
+    {
+      "path": "schema/SecurityAnalysisResultProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "e9d5dc0cc832bee96eb152b9a5d0bf35a111d2522396a607e0ff82c106b2b833"
+    },
+    {
+      "path": "schema/SensitivityMatrixProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "e8adab37b82062351205320b9e2539444660beea5281009640596c1f6d22c8be"
+    },
+    {
+      "path": "schema/StateInstructionScheduleProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "fc04a09c885ce84029a741095e3b3e8d44a7999ded71e4cfbd31edd5c4dea7de"
+    },
+    {
+      "path": "schema/SteadyStateInstructionProfile_v2_2_RDFSv2020_20Apr2023.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "0c40d17744e5aa5908d53482996d05467d92efe2d457b5ea23edda8c09705676"
+    },
+    {
+      "path": "shapes/AssessedElementProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "62894e58a42960bde70146843b942e2a5e3f5a628bcf83268dcc50c8b3848b14"
+    },
+    {
+      "path": "shapes/AvailabilityScheduleProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "469faf83d77d59d598148e931ff7cbecf07bbbc9a6af6abd867aeb968d2bd28b"
+    },
+    {
+      "path": "shapes/ContingencyProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "52af0adf816260dd2cd8c2fb81a3190e31d781cd8879473db7040b58289cf063"
+    },
+    {
+      "path": "shapes/CustomConstraints/AssessedElementProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "659bf875219bdfae7017c9fca5f2f72b0b3ef6136e809461406036e33a69cdf2"
+    },
+    {
+      "path": "shapes/CustomConstraints/ContingencyProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "ae18869aac9370c2e2ddbf354f5a27e11ad83966ed6633265fcf8cc34bcab6c7"
+    },
+    {
+      "path": "shapes/CustomConstraints/EquipmentReliabilityProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "a81a9d5c6c828f8d4ee46049d50d4605ec3489b1ee65130e95e71ce00b79b972"
+    },
+    {
+      "path": "shapes/CustomConstraints/IdentifiedObjecStringLength.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "e4af8a1d641aac51f1b1b397b3dd08ef5505ec7be940ecbed7fdc29f537e2906"
+    },
+    {
+      "path": "shapes/CustomConstraints/ImpactAssessmentMatrixProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "707f8f70b3b500645d7026958474fffc561dbc0dd107f2adafffacc391814ae8"
+    },
+    {
+      "path": "shapes/CustomConstraints/RemedialActionScheduleProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "394bc238c198364ee28916b1cc68ed9a710376e59b0ed354571b40b92fd1fd42"
+    },
+    {
+      "path": "shapes/CustomConstraints/SecurityAnalysisResultProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "9a093d4d0e6c4fc0feac0f7bde501d42ba9fbf62e632776781a3af9bd4a15a69"
+    },
+    {
+      "path": "shapes/DocumentHeaderProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "f11b3701396f9aef952f06bf2d3952505df65241a8ece83cb75a5914bf748142"
+    },
+    {
+      "path": "shapes/EquipmentReliabilityProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "ddbf4dce0a2ed1c688ee0872e31107b36cc70abd999527b60d5f443b65de943d"
+    },
+    {
+      "path": "shapes/GridDisturbanceProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "f46adddd93e90b03ce2551691a75573ddf8fae4ef387e609050f4f58c2e52e65"
+    },
+    {
+      "path": "shapes/ImpactAssessmentMatrixProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "4c33b03176c6925ab476df94966d1ea664240bf2010ebf0b06042c26312d9b80"
+    },
+    {
+      "path": "shapes/MonitoringAreaProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "eba9080ee6c5edeb2df55e7aa750a403558ae2e09a272e6a1ed63e5ea57462a8"
+    },
+    {
+      "path": "shapes/ObjectRegistryProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "70b77c82b63e9c1d753e0703a99d93c0922d3107d85c32e58884f2dd21e5358c"
+    },
+    {
+      "path": "shapes/PowerScheduleProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "266ae9be868cf8aa634a8510167ebbc2e825ed4b90345b2715d00bed02958509"
+    },
+    {
+      "path": "shapes/PowerSystemProjectProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "d1e5b3b0f8f3400b830a703d1df46111f8e2ff524d4c2801db93b275c0c01886"
+    },
+    {
+      "path": "shapes/RemedialActionProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "e416e6e36a03401b232666bfd6620d9899530e1bb558fd4309b3fb8956d6ef0e"
+    },
+    {
+      "path": "shapes/RemedialActionScheduleProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "cb9d074988e07bc767582fad9ced0974d1ee5f492618e3519268b76301cd14a5"
+    },
+    {
+      "path": "shapes/SecurityAnalysisResultProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "5c45035c74ff2412bb1f87d9c2b5391a1992070711fd309db114dd2b3fb0abff"
+    },
+    {
+      "path": "shapes/SensitivityMatrixProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "c66fbe1df79d8319bb17405c9ac58b12133fc42cd3e0a858b65172d1c972a985"
+    },
+    {
+      "path": "shapes/StateInstructionScheduleProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "f1866cc88d007938d930757d1d15f6222b8f6cfad2035674f10aabb7c463e8c6"
+    },
+    {
+      "path": "shapes/SteadyStateInstructionProfile_v2_2_SHACL.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "adee6e58be2cb4ca137f08801b0d10d37f8adc48a85fabd8d81d8f6b8bf09b9b"
+    },
+    {
+      "path": "shapes/ValidationConstraints/AssessedElementProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "ad0109e55f6c1ae4338f6b373b3e1821271f8046739f777b1f84a84d5888da21"
+    },
+    {
+      "path": "shapes/ValidationConstraints/GridStateValidationConstraintAssessedElement.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "f8957f02bb0056f774e42fc4d247284e24ff68ead6f01cc625264f66e16ab21b"
+    },
+    {
+      "path": "shapes/ValidationConstraints/PowerScheduleProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "9a77524fbd2b24ae65fe7d2605fd0adf0e4b3d296ab1659ceb46a9c7ea9e3f32"
+    },
+    {
+      "path": "shapes/ValidationConstraints/RemedialActionProfileCustomConstraints.ttl",
+      "role": "shapes",
+      "media_type": "text/turtle",
+      "sha256": "8871ee36acec99cc5147dbba8ee0d334d63f9fd6a1ee762ad8b74e37ee950ad5"
+    }
+  ],
+  "artifact_revision": "NCP application profiles 2.2 (2023 artifact set)"
+}

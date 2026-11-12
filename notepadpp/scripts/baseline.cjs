@@ -1,0 +1,1 @@
+const fs=require('fs');const path=require('path');const root=process.cwd();const source=path.resolve(root,'../vscode');const esbuild=require(path.join(source,'node_modules/esbuild'));esbuild.buildSync({entryPoints:[path.join(source,'test/core.test.ts')],outfile:path.join(root,'out/test/baseline.js'),bundle:true,platform:'node',nodePaths:[path.join(source,'node_modules')]});

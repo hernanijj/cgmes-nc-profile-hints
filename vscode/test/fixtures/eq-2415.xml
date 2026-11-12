@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/2013/CIM-schema-cim16#" xmlns:entsoe="http://entsoe.eu/CIM/SchemaExtension/3/1#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:2bfc1c0e-6b39-4e5c-9a7e-3f3b0d2c6a11">
+    <md:Model.created>2024-01-01T00:00:00Z</md:Model.created>
+    <md:Model.scenarioTime>2024-01-01T00:00:00Z</md:Model.scenarioTime>
+    <md:Model.profile>http://entsoe.eu/CIM/EquipmentCore/3/1</md:Model.profile>
+    <md:Model.modelingAuthoritySet>http://example.eu/TSO</md:Model.modelingAuthoritySet>
+  </md:FullModel>
+  <cim:BaseVoltage rdf:ID="_7e4b1f2a-1c1d-4e7b-9a10-0b6f8b0f0001">
+    <cim:IdentifiedObject.name>400 kV</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>400</cim:BaseVoltage.nominalVoltage>
+  </cim:BaseVoltage>
+  <cim:ACLineSegment rdf:ID="_7e4b1f2a-1c1d-4e7b-9a10-0b6f8b0f0002">
+    <cim:IdentifiedObject.name>Line 1</cim:IdentifiedObject.name>
+    <cim:ACLineSegment.r>abc</cim:ACLineSegment.r>
+    <cim:ACLineSegment.x>1.5</cim:ACLineSegment.x>
+    <cim:ACLineSegment.x>1.6</cim:ACLineSegment.x>
+    <cim:ConductingEquipment.BaseVoltage rdf:resource="#_7e4b1f2a-1c1d-4e7b-9a10-0b6f8b0f0001"/>
+    <cim:ACLineSegment.foo>1</cim:ACLineSegment.foo>
+  </cim:ACLineSegment>
+  <cim:Terminal rdf:ID="_7e4b1f2a-1c1d-4e7b-9a10-0b6f8b0f0003">
+    <cim:IdentifiedObject.name>T1</cim:IdentifiedObject.name>
+    <cim:Terminal.ConductingEquipment rdf:resource="#_7e4b1f2a-1c1d-4e7b-9a10-0b6f8b0f0001"/>
+    <cim:ACDCTerminal.sequenceNumber>1</cim:ACDCTerminal.sequenceNumber>
+    <cim:Terminal.phases rdf:resource="http://iec.ch/TC57/2013/CIM-schema-cim16#PhaseCode.XYZ"/>
+  </cim:Terminal>
+  <cim:Equipment rdf:ID="_x1"/>
+  <nc:RemedialAction rdf:ID="_x2"/>
+  <cim:SvVoltage rdf:ID="_x3"/>
+</rdf:RDF>

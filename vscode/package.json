@@ -1,0 +1,309 @@
+{
+  "name": "cgmes-cim-hints",
+  "version": "0.1.12",
+  "description": "Completions, hovers and validation for CIM/XML instance files following CGMES 2.4.15, CGMES 3.0 and ENTSO-E network code profiles (NCP) 2.2.",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build:profiles": "tsc -p . && node out/scripts/build-profiles.js",
+    "compile": "tsc -p . --noEmit && esbuild src/extension.ts --bundle --platform=node --format=cjs --external:vscode --outfile=dist/extension.js --sourcemap",
+    "test": "tsc -p . && node --test out/test/*.test.js",
+    "package": "npm run compile && vsce package --no-dependencies --allow-missing-repository",
+    "vscode:prepublish": "npm run compile"
+  },
+  "keywords": [
+    "CGMES",
+    "CIM",
+    "ENTSO-E",
+    "RDF",
+    "network codes",
+    "IEC 61970"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/n3": "^1.26.4",
+    "@types/node": "^20.19.43",
+    "@types/vscode": "1.85",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "n3": "^2.13.12"
+  },
+  "displayName": "CGMES & NC Profile Hints",
+  "publisher": "hernanijusto",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "activationEvents": [
+    "onLanguage:xml"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "xml",
+        "extensions": [
+          ".rdf",
+          ".cimxml"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "cgmes.selectProfile",
+        "title": "Select profile for this file",
+        "category": "CGMES"
+      },
+      {
+        "command": "cgmes.selectVersion",
+        "title": "Select CIM version for this file",
+        "category": "CGMES"
+      },
+      {
+        "command": "cgmes.newDocument",
+        "title": "New CIM/XML instance file",
+        "category": "CGMES"
+      },
+      {
+        "command": "cgmes.reloadProfiles",
+        "title": "Reload profile definitions",
+        "category": "CGMES"
+      },
+      {
+        "command": "cgmes.showIssues",
+        "title": "Show issues of this file",
+        "category": "CGMES",
+        "icon": "$(list-flat)"
+      },
+      {
+        "command": "cgmes.issues.groupByCheck",
+        "title": "Group by check",
+        "category": "CGMES",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "cgmes.issues.groupBySeverity",
+        "title": "Group by severity",
+        "category": "CGMES",
+        "icon": "$(warning)"
+      },
+      {
+        "command": "cgmes.dataset.validateTogether",
+        "title": "Validate together",
+        "category": "CGMES"
+      },
+      {
+        "command": "cgmes.dataset.menu",
+        "title": "Dataset…",
+        "category": "CGMES",
+        "icon": "$(references)"
+      },
+      {
+        "command": "cgmes.dataset.choose",
+        "title": "Choose the files to validate together",
+        "category": "CGMES",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "cgmes.dataset.automatic",
+        "title": "Dataset: automatic (from the headers)",
+        "category": "CGMES"
+      },
+      {
+        "command": "cgmes.dataset.validate",
+        "title": "Validate the selected files again",
+        "category": "CGMES",
+        "icon": "$(play)"
+      }
+    ],
+    "configuration": {
+      "title": "CGMES",
+      "properties": {
+        "cgmes.version": {
+          "type": "string",
+          "default": "auto",
+          "description": "CIM version used for hints: \"auto\" detects it from namespaces and the header, or a bundle id such as \"cgmes-2.4.15\", \"cgmes-3.0\" or \"ncp-2.2\"."
+        },
+        "cgmes.schemaFolders": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Extra RDFS (and optional SHACL .ttl) folders to load, e.g. `[{\"folder\": \"C:/schemas/ncp/2.4.1\", \"label\": \"NC profiles 2.4.1\", \"id\": \"ncp-2.4.1\"}]`. A folder with the same `id` as a bundled package replaces it.",
+          "items": {
+            "type": "object",
+            "required": [
+              "folder"
+            ],
+            "properties": {
+              "folder": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "family": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cgmes.propertyReferenceList": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "File with the ENTSO-E PropertyReference list (http://energy.referencedata.eu/PropertyReference/) in any text form: RDF/XML, Turtle, JSON, HTML, CSV or one `Class.property` per line. NC `PropertyReference` values are checked against it by their property name only, whatever namespace they use. Without it, the name is checked against the properties of the loaded CIM profiles. A relative path is read from the first workspace folder."
+        },
+        "cgmes.idStyle": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "rdfID",
+            "urnUuid"
+          ],
+          "default": "auto",
+          "description": "Identifier style for new objects: rdf:ID=\"_uuid\" (CGMES 2.4.15 and 3.0) or rdf:about=\"urn:uuid:...\" (NC profiles). \"auto\" follows the file, then the version default."
+        },
+        "cgmes.completion.insertRequiredProperties": {
+          "type": "boolean",
+          "default": true,
+          "description": "When inserting a new object, also insert its required properties."
+        },
+        "cgmes.validation.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show profile diagnostics for CIM/XML files."
+        },
+        "cgmes.validation.requiredProperties": {
+          "type": "boolean",
+          "default": true,
+          "description": "Report missing required properties (multiplicity 1..)."
+        },
+        "cgmes.validation.identifierFormat": {
+          "type": "boolean",
+          "default": true,
+          "description": "Check that identifiers are \"_\" + UUID or urn:uuid:..."
+        },
+        "cgmes.validation.propertyReferences": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Check NC `PropertyReference` values (by their `Class.property` name) against the list in `#cgmes.propertyReferenceList#`, the bundled ENTSO-E list, or the properties of the loaded CIM profiles when no list is available."
+        },
+        "cgmes.validation.unresolvedReferences": {
+          "type": "string",
+          "enum": [
+            "off",
+            "hint",
+            "info",
+            "warning"
+          ],
+          "default": "hint",
+          "description": "How to report references to objects that are not in the same file when they cannot be checked against the folder (cross-file checks off, no other CIM files there, or a model the file depends on, such as the boundary set, is not there)."
+        },
+        "cgmes.validation.danglingReferences": {
+          "type": "string",
+          "enum": [
+            "off",
+            "hint",
+            "info",
+            "warning",
+            "error"
+          ],
+          "default": "warning",
+          "description": "How to report references (and rdf:about descriptions) to objects found neither in the file nor in the other CIM files of its folder, when every model the file depends on is there."
+        },
+        "cgmes.crossFile.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Check references against the other CIM files in the same folder (a CGM's EQ, SSH, TP, SV; NC profiles such as AE, RA, CO, SIS). The folder is indexed in the background and kept current when files change."
+        },
+        "cgmes.crossFile.extraFolders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "More folders whose CIM files take part in cross-file checks, e.g. the folder with the boundary set or the EQ the NC files point to. Relative paths are resolved against the workspace."
+        },
+        "cgmes.crossFile.maxTotalSizeMB": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 1,
+          "description": "Stop indexing a folder once its CIM files add up to this size (MB)."
+        },
+        "cgmes.crossFile.maxValidateSizeMB": {
+          "type": "number",
+          "default": 60,
+          "minimum": 1,
+          "description": "Files of a selected dataset that are not open are validated from disk up to this size (MB). Larger ones only resolve references; open them to validate them."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "cgmes.issues",
+          "name": "CIM Issues",
+          "icon": "$(warning)",
+          "contextualTitle": "CIM Issues"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "cgmes.dataset.choose",
+          "when": "view == cgmes.issues",
+          "group": "navigation@0"
+        },
+        {
+          "command": "cgmes.issues.groupByCheck",
+          "when": "view == cgmes.issues && cgmes.issues.groupBy != code",
+          "group": "navigation"
+        },
+        {
+          "command": "cgmes.issues.groupBySeverity",
+          "when": "view == cgmes.issues && cgmes.issues.groupBy == code",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "cgmes.issues.groupByCheck",
+          "when": "false"
+        },
+        {
+          "command": "cgmes.issues.groupBySeverity",
+          "when": "false"
+        },
+        {
+          "command": "cgmes.dataset.validateTogether",
+          "when": "false"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "cgmes.dataset.validateTogether",
+          "when": "explorerResourceIsFolder || resourceExtname =~ /^\\.(xml|rdf|cimxml)$/i",
+          "group": "7_modification@9"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "cgmes.dataset.choose",
+          "when": "view == cgmes.issues && viewItem == cgmesDataset",
+          "group": "inline"
+        }
+      ]
+    }
+  }
+}

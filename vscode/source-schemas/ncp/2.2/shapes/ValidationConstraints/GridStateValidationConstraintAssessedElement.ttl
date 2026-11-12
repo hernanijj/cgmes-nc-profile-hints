@@ -1,0 +1,355 @@
+@base          <http://entsoe.eu/ns/CIM/GridExtraDangglingAE-AssessedElement_CORNET/CustomConstraints> .
+@prefix eu:    <http://iec.ch/TC57/CIM100-European#> .
+@prefix cims:  <http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix cim:   <http://iec.ch/TC57/CIM100#> .
+@prefix aec:  <http://entsoe.eu/ns/CIM/AssessedElement-EU/CustomConstraints#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dash:  <http://datashapes.org/dash#> .
+@prefix dcterms:    <http://purl.org/dc/terms#> .
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix nc:      <http://entsoe.eu/ns/nc#> .
+@prefix sm600:  <http://iec.ch/TC57/ns/CIM/SolvedMAS/constraints/IEC61970-600/3.0#> .
+
+aec:Ontology  rdf:type         owl:Ontology ;
+        dcterms:conformsTo        "urn:iso:std:iec:61970-501:draft:ed-2" , "urn:iso:std:iec:61970-600-2:ed-1" , "urn:iso:std:iec:61970-301:ed-7:amd1" , "file://iec61970cim17v40_iec61968cim13v13a_iec62325cim03v17a.eap" ;
+        dcterms:creator           "HERNANI TSCNET"@en ;
+        dcterms:description       "The custom constraints for assessed element profile."@en ;
+        dcterms:identifier        "urn:uuid:c70cc892-68ed-4ff2-8eb1-6da1fa24a310" ;
+        dcterms:issued            "2022-09-28T12:09:21Z"^^xsd:dateTime ;
+        dcterms:language          "en-GB" ;
+        dcterms:rights            "Copyright"@en ;
+        dcterms:rightsHolder      "HERNANI JUSTO DA SILVA JUNIOR"@en ;
+        dcterms:title             "Assessed element profile custom Constraints"@en ;
+        owl:versionIRI        <http://entsoe.eu/ns/CIM/AssessedElement-EU/CustomConstraints/2.1> ;
+		dcterms:license        "https://www.apache.org/licenses/LICENSE-2.0" ;
+        owl:versionInfo       "2.1.0"@en ;
+        dcat:landingPage      "https://www.entsoe.eu/digital/cim/cim-for-grid-models-exchange/" ;
+        dcat:theme            "constraints"@en .
+
+cim:    
+    a           owl:Ontology ;
+    owl:imports sh: ;
+    sh:declare [
+        a sh:PrefixDeclaration ;
+        sh:namespace "http://iec.ch/TC57/CIM100#"^^xsd:anyURI ;
+        sh:prefix "cim" ;
+    ] ;
+	sh:declare [
+        a sh:PrefixDeclaration ;
+        sh:namespace "http://entsoe.eu/ns/nc#"^^xsd:anyURI ;
+        sh:prefix "nc" ;
+    ] ;
+    sh:declare [
+        a sh:PrefixDeclaration ;
+        sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ;
+        sh:prefix "rdf" ;
+    ] ;
+    sh:declare [
+        a sh:PrefixDeclaration ;
+        sh:namespace "http://iec.ch/TC57/CIM100-European#"^^xsd:anyURI ;
+        sh:prefix "eu" ;
+    ] .
+
+sm600:DanglingReferencesGroup  rdf:type  sh:PropertyGroup ;
+        rdfs:label  "DanglingReferences" ;
+        sh:order    0 .
+
+sm600:DanglingReferences  a  sh:NodeShape ;
+        sh:property     sm600:All-DanglingReferences;
+        sh:targetClass  nc:AssessedElement .
+        
+ 
+sm600:All-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:All-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The CGMES requires that at the receiving end of the exchange all references in the instance files pointing to instance files from other profiles which are part of the exchange should be satisfied. Therefore, the complete set of instance files necessary for the grid model shall have fulfilled references (no dangling references are allowed)." ;
+        sh:name         "C:600:ALL:NA:FBOD4" ;
+        sh:order        1 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:All-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this nc:AssessedElement.ConductingEquipment ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+
+sm600:OperationalLimitAEDanglingReferences  a  sh:NodeShape ;
+        sh:property     sm600:DanglingReferences_AE_OperationalLimits;
+        sh:targetClass  nc:AssessedElement .
+        
+ 
+sm600:DanglingReferences_AE_OperationalLimits
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:DanglingReferencesSparql-AE-OperationalLimits ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the AE class." ;
+        sh:name         "DanglingRef_OperationalLimits_AE" ;
+        sh:order        2 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:DanglingReferencesSparql-AE-OperationalLimits
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this nc:AssessedElement.OperationalLimit ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+			
+
+
+sm600:TapPositionAction.TapChanger-DanglingReferencesNodeShape  a  sh:NodeShape ;
+        sh:property     sm600:TapPositionAction.TapChanger-DanglingReferences;
+        sh:targetClass  nc:TapPositionAction .
+        
+ 
+sm600:TapPositionAction.TapChanger-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:TapPositionAction.TapChanger-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the RA class." ;
+        sh:name         "DanglingReferences-TapPositionAction.TapChanger" ;
+        sh:order        3 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:TapPositionAction.TapChanger-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this nc:TapPositionAction.TapChanger ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+			
+
+sm600:TopologyAction.Switch-DanglingReferencesNodeShape  a  sh:NodeShape ;
+        sh:property     sm600:TopologyAction.Switch-DanglingReferences;
+        sh:targetClass  nc:TopologyAction .
+        
+ 
+sm600:TopologyAction.Switch-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:TopologyAction.Switch-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the RA class." ;
+        sh:name         "DanglingReferences-TopologyAction.Switch" ;
+        sh:order        3 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:TopologyAction.Switch-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this nc:TopologyAction.Switch ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+			
+
+sm600:ERGeneratingUnit-DanglingReferencesNodeShape  a  sh:NodeShape ;
+        sh:property     sm600:ERGeneratingUnit-DanglingReferences;
+        sh:targetClass  cim:GeneratingUnit .
+        
+ 
+sm600:ERGeneratingUnit-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:ERGeneratingUnit-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the RA class." ;
+        sh:name         "DanglingReferences-ERGeneratingUnit" ;
+        sh:order        6 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:ERGeneratingUnit-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this cim:GeneratingUnit ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+			
+
+
+sm600:GLSKSchedule.GeneratingUnit-DanglingReferencesNodeShape  a  sh:NodeShape ;
+        sh:property     sm600:GLSKSchedule.GeneratingUnit-DanglingReferences;
+        sh:targetClass  nc:GLSKSchedule .
+        
+ 
+sm600:GLSKSchedule.GeneratingUnit-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:GLSKSchedule.GeneratingUnit-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the RA class." ;
+        sh:name         "DanglingReferences-GLSKSchedule.GeneratingUnit" ;
+        sh:order        4 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:GLSKSchedule.GeneratingUnit-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this nc:GLSKSchedule.GeneratingUnit ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+
+sm600:ContingencyEquipment.Equipment-DanglingReferencesNodeShape  a  sh:NodeShape ;
+        sh:property     sm600:ContingencyEquipment.Equipment-DanglingReferences;
+        sh:targetClass  cim:ContingencyEquipment .
+        
+ 
+sm600:ContingencyEquipment.Equipment-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:ContingencyEquipment.Equipment-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the CO class." ;
+        sh:name         "DanglingReferences-ContingencyEquipment.Equipment" ;
+        sh:order        5 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:ContingencyEquipment.Equipment-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this cim:ContingencyEquipment.Equipment ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+			
+sm600:PowerSchedule.GeneratingUnit-DanglingReferencesNodeShape  a  sh:NodeShape ;
+        sh:property     sm600:PowerSchedule.GeneratingUnit-DanglingReferences;
+        sh:targetClass  nc:PowerSchedule .
+        
+ 
+sm600:PowerSchedule.GeneratingUnit-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:PowerSchedule.GeneratingUnit-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the PS class." ;
+        sh:name         "DanglingReferences-PowerSchedule.GeneratingUnit" ;
+        sh:order        7 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:PowerSchedule.GeneratingUnit-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this nc:PowerSchedule.GeneratingUnit ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" . 
+
+sm600:PowerSchedule.HydroPump-DanglingReferencesNodeShape  a  sh:NodeShape ;
+        sh:property     sm600:PowerSchedule.HydroPump-DanglingReferences;
+        sh:targetClass  nc:PowerSchedule .
+        
+ 
+sm600:PowerSchedule.HydroPump-DanglingReferences
+        a               sh:PropertyShape ;
+		sh:group		sm600:DanglingReferencesGroup;
+        sh:sparql       sm600:PowerSchedule.HydroPump-DanglingReferencesSparql ;
+        #sh:path         rdf:type ;
+        sh:description  "The OperationalLimits is the link with IGMs/CGMs and should have a valid mRID on the PS class." ;
+        sh:name         "DanglingReferences-PowerSchedule.HydroPump" ;
+        sh:order        8 ;
+		sh:path 		rdf:type ;		
+        sh:severity     sh:Violation .
+ 
+sm600:PowerSchedule.HydroPump-DanglingReferencesSparql
+		a         sh:SPARQLConstraint ;  
+		sh:message "Dangling reference is present in the model. The Conduct EQ mRID: {?value} of the class ID: {$this}." ;
+		sh:prefixes cim: ;
+		sh:select """
+			SELECT  DISTINCT $this ?value
+				WHERE {
+			$this nc:PowerSchedule.HydroPump ?value .
+			BIND (str(?value) AS ?strvalue).
+
+			FILTER(isIRI(?value) ).              
+
+			FILTER NOT EXISTS {?value rdf:type ?v }.
+			
+			}""" .
+			
+			

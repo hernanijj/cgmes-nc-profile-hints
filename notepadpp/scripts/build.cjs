@@ -1,0 +1,11 @@
+const fs=require('fs'),path=require('path');
+const root=path.resolve(__dirname,'..');
+const modules=fs.existsSync(path.join(root,'node_modules/esbuild'))?path.join(root,'node_modules'):path.resolve(root,'../vscode/node_modules');
+const esbuild=require(path.join(modules,'esbuild'));
+const output=path.join(root,'dist/CGMESNotepad');
+fs.mkdirSync(output,{recursive:true});
+esbuild.buildSync({entryPoints:[path.join(root,'src/worker.ts')],outfile:path.join(output,'worker.cjs'),bundle:true,platform:'node',format:'cjs',nodePaths:[modules]});
+fs.cpSync(path.join(root,'profiles'),path.join(output,'profiles'),{recursive:true});
+fs.copyFileSync(process.execPath,path.join(output,'node.exe'));
+for(const name of fs.readdirSync(path.join(root,'test')).filter(f=>f.endsWith('.test.ts'))) esbuild.buildSync({entryPoints:[path.join(root,'test',name)],outfile:path.join(root,'out/test',name.replace('.ts','.js')),bundle:true,platform:'node',format:'cjs',nodePaths:[modules]});
+console.log('Worker, profiles, runtime and tests built. Run build.ps1 to compile the DLL.');

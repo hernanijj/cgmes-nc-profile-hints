@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:cim="http://iec.ch/TC57/CIM100#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:dcterms="http://purl.org/dc/terms/#"
+    xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#"
+    xmlns:nc="http://entsoe.eu/ns/nc#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:11111111-1111-4111-8111-111111111111">
+    <dcterms:conformsTo>http://entsoe.eu/ns/CIM/RemedialAction-EU/2.2</dcterms:conformsTo>
+    <dcterms:identifier>11111111-1111-4111-8111-111111111111</dcterms:identifier>
+    <prov:generatedAtTime>2025-01-01T00:00:00Z</prov:generatedAtTime>
+    <dcat:startDate>2025-01-01T00:00:00Z</dcat:startDate>
+    <dcat:endDate>2025-01-01T00:00:00Z</dcat:endDate>
+    <dcat:keyword>RA</dcat:keyword>
+    <dcat:version>1</dcat:version>
+  </md:FullModel>
+
+  <nc:GridStateAlterationRemedialAction rdf:ID="_22222222-2222-4222-8222-222222222222">
+    <cim:IdentifiedObject.mRID>22222222-2222-4222-8222-222222222222</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Dummy topology remedial action</cim:IdentifiedObject.name>
+    <nc:RemedialAction.AppointedToRegion rdf:resource="https://example.test/region/dummy"/>
+    <nc:RemedialAction.normalAvailable>trueo</nc:RemedialAction.normalAvailable>
+    <nc:RemedialAction.isCrossBorderRelevant>false</nc:RemedialAction.isCrossBorderRelevant>
+    <nc:RemedialAction.RemedialActionSystemOperator rdf:resource="https://example.test/operator/dummy"/>
+    <cim:RemedialAction.kind rdf:resource="http://entsoe.eu/ns/nc#RemedialActionKind.preventive"/>
+    <nc:RemedialAction.penaltyFactor>10</nc:RemedialAction.penaltyFactor>
+    <nc:RemedialAction.isManual>true</nc:RemedialAction.isManual>
+  </nc:GridStateAlterationRemedialAction>
+
+  <nc:GridStateAlterationRemedialAction rdf:ID="_33333333-3333-4333-8333-333333333333">
+    <cim:IdentifiedObject.mRID>33333333-3333-4333-8333-333333333333</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Dummy manual remedial action</cim:IdentifiedObject.name>
+    <nc:RemedialAction.AppointedToRegion rdf:resource="https://example.test/region/dummy"/>
+    <nc:RemedialAction.normalAvailable>true</nc:RemedialAction.normalAvailable>
+    <nc:RemedialAction.isCrossBorderRelevant>false</nc:RemedialAction.isCrossBorderRelevant>
+    <nc:RemedialAction.RemedialActionSystemOperator rdf:resource="https://example.test/operator/dummy"/>
+    <cim:RemedialAction.kind rdf:resource="http://entsoe.eu/ns/nc#RemedialActionKind.preventive"/>
+    <nc:RemedialAction.penaltyFactor>5</nc:RemedialAction.penaltyFactor>
+    <nc:RemedialAction.isManual>false</nc:RemedialAction.isManual>
+  </nc:GridStateAlterationRemedialAction>
+</rdf:RDF>

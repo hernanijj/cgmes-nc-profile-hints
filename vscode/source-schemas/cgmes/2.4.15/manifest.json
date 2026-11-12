@@ -1,0 +1,100 @@
+{
+  "$schema": "../../../manifest.schema.json",
+  "format": "gridscope-validation-package",
+  "format_version": 1,
+  "family": "CGMES",
+  "release": "2.4.15",
+  "provider": "ENTSO-E",
+  "status": "installed-unverified",
+  "namespaces": {
+    "cim": "http://iec.ch/TC57/2013/CIM-schema-cim16#",
+    "nc": null
+  },
+  "source": {
+    "url": "https://www.entsoe.eu/digital/cim/cim-for-grid-models-exchange/",
+    "retrieved_at": null,
+    "license": "Copyright ENTSO-E; redistribution permission not established"
+  },
+  "inference": "rdfs",
+  "files": [
+    {
+      "path": "schema/DiagramLayoutProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "3c255e708b290694e6c029b4d90498088754db3a634c71ac54a0d6d248801102"
+    },
+    {
+      "path": "schema/DynamicsProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "988a3c74692cfcac145b9861d6ce75cdaf37e0feecc0dd8e82898e87e7060862"
+    },
+    {
+      "path": "schema/EquipmentBoundaryProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "d1593fcee88433dc6522d71e9996cfa3a595e586b40c7ac7a4db7f9d39918c85"
+    },
+    {
+      "path": "schema/EquipmentProfileCoreOperationRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "c56cdc864da1e48ff18b47a3fc4d03e984ddd6b0dfab297afdcef4017b846c85"
+    },
+    {
+      "path": "schema/EquipmentProfileCoreOperationShortCircuitRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "5fe372bb1cdf43afc3fdd5dd9c180ef782e21e41560a28c2c35e503094c5da39"
+    },
+    {
+      "path": "schema/EquipmentProfileCoreRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "5c11f0d133ce8851d688f49872226658284cac1f56a03c0a2b4d36e4fe11a11b"
+    },
+    {
+      "path": "schema/EquipmentProfileCoreShortCircuitRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "41445d9fa23b9cd7f3e0f423f1bbc2495975357650c1fdeedd83a6c125d30fd9"
+    },
+    {
+      "path": "schema/FileHeader.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "0a5dea9a19f1475b66fe537282601192e88efd38546aff9c2f50ca8f449912f6"
+    },
+    {
+      "path": "schema/GeographicalLocationProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "aecf0668d00c79ef9e430c80bef75863fbff08e4e287ecdedf1408a713ada14f"
+    },
+    {
+      "path": "schema/StateVariableProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "a10a206ea73a065312718c3012da7f5f8cdd31f7605dab36da32a36ba5dc513c"
+    },
+    {
+      "path": "schema/SteadyStateHypothesisProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "c457a2383c1260629b5ab0b8bb10faea0d468a817dca331423aa4590a9f29302"
+    },
+    {
+      "path": "schema/TopologyBoundaryProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "df96dfd3d80fe9ff534054fe1f5408b139a62a8182c09fca9edc42895be4fc0f"
+    },
+    {
+      "path": "schema/TopologyProfileRDFSAugmented-v2_4_15-4Sep2020.rdf",
+      "role": "schema",
+      "media_type": "application/rdf+xml",
+      "sha256": "cedb77113c4e24632cc5c2c1df33c84b0c8f1dd9cb7d64eb650aade3fce43d54"
+    }
+  ],
+  "artifact_revision": "RDFS augmented 2.4.15 (4 Sep 2020)"
+}

@@ -1,0 +1,9 @@
+**
+!dist/extension.js
+!profiles/*.json
+!package.json
+!README.md
+!CHANGELOG.md
+!LICENSE
+!NOTICE.md
+!profiles/property-references.*

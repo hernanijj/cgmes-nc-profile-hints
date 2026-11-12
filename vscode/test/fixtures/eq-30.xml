@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:4b1f8a2c-3d6e-4f70-9a81-0c2d3e4f5a60">
+    <md:Model.created>2025-05-05T14:23:18Z</md:Model.created>
+    <md:Model.scenarioTime>2025-05-05T22:30:00Z</md:Model.scenarioTime>
+    <md:Model.description>Test model</md:Model.description>
+    <md:Model.version>1</md:Model.version>
+    <md:Model.modelingAuthoritySet>http://www.example.eu/OperatorX</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0</md:Model.profile>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/Operation-EU/3.0</md:Model.profile>
+  </md:FullModel>
+  <cim:BaseVoltage rdf:ID="_6a1f0c2e-1b2d-4c3e-8f40-5a6b7c8d9e01">
+    <cim:IdentifiedObject.mRID>6a1f0c2e-1b2d-4c3e-8f40-5a6b7c8d9e01</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>380 kV</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>380</cim:BaseVoltage.nominalVoltage>
+  </cim:BaseVoltage>
+  <cim:ACLineSegment rdf:ID="_0d3e2f1a-4b5c-4d6e-9f70-8a9b0c1d2e03">
+    <cim:IdentifiedObject.mRID>0d3e2f1a-4b5c-4d6e-9f70-8a9b0c1d2e03</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>L321</cim:IdentifiedObject.name>
+    <cim:ConductingEquipment.BaseVoltage rdf:resource="#_6a1f0c2e-1b2d-4c3e-8f40-5a6b7c8d9e01"/>
+    <cim:ACLineSegment.bch>0.0001963495</cim:ACLineSegment.bch>
+    <cim:ACLineSegment.r>1.25</cim:ACLineSegment.r>
+  </cim:ACLineSegment>
+  <cim:Terminal rdf:ID="_9e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c04">
+    <cim:IdentifiedObject.mRID>9e8d7c6b-5a4f-4e3d-8c2b-1a0f9e8d7c04</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>T1</cim:IdentifiedObject.name>
+    <cim:ACDCTerminal.sequenceNumber>1</cim:ACDCTerminal.sequenceNumber>
+    <cim:Terminal.ConductingEquipment rdf:resource="#_0d3e2f1a-4b5c-4d6e-9f70-8a9b0c1d2e03"/>
+  </cim:Terminal>
+  <cim:ConnectivityNode rdf:ID="_7c6b5a4f-3e2d-4c1b-9a0f-8e7d6c5b4a05">
+    <cim:IdentifiedObject.mRID>7c6b5a4f-3e2d-4c1b-9a0f-8e7d6c5b4a05</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>N1</cim:IdentifiedObject.name>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_8d7c6b5a-4f3e-4d2c-8b1a-0f9e8d7c6b06"/>
+  </cim:ConnectivityNode>
+</rdf:RDF>
