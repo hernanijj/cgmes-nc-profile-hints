@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <dcat:Dataset rdf:about="urn:uuid:11111111-1111-4111-8111-111111111111">
+    <dcterms:conformsTo>https://ap-voc.cim4.eu/RemedialAction/2.5</dcterms:conformsTo>
+  </dcat:Dataset>
+
+  <nc:GridStateAlterationRemedialAction rdf:ID="_22222222-2222-4222-8222-222222222222">
+    <cim:IdentifiedObject.mRID>22222222-2222-4222-8222-222222222222</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Dummy NCP 2.5 remedial action</cim:IdentifiedObject.name>
+    <nc:RemedialAction.AppointedToRegion rdf:resource="urn:uuid:33333333-3333-4333-8333-333333333333"/>
+    <nc:RemedialAction.isCrossBorderRelevant>false</nc:RemedialAction.isCrossBorderRelevant>
+    <nc:RemedialAction.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionKind.preventive"/>
+    <nc:RemedialAction.normalAvailable>true</nc:RemedialAction.normalAvailable>
+    <nc:GridStateAlterationRemedialAction.isActivationRestricted>true</nc:GridStateAlterationRemedialAction.isActivationRestricted>
+  </nc:GridStateAlterationRemedialAction>
+</rdf:RDF>
