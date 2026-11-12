@@ -39,6 +39,34 @@ test('NCP 2.4 is offered for versions, profiles and new documents',async()=>{
  }finally{fs.rmSync(tmp,{recursive:true,force:true});}
 });
 
+test('NCP 2.5 is offered for versions, profiles and new documents',async()=>{
+ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'cgmes-ncp25-'));
+ try {
+  const engine=new Engine(root,path.join(tmp,'settings.json'));
+  const r={id:1,revision:0,file:path.join(tmp,'ra.xml'),text:'',position:0,command:'versions'};
+  const versions=await engine.handle(r);
+  assert.ok(versions.items.some((i:any)=>i.argument?.version==='ncp-2.5'));
+  const profiles=await engine.handle({...r,command:'profiles'});
+  const choice=profiles.items.find((i:any)=>i.argument?.version==='ncp-2.5' && i.argument.profiles?.[0]==='RA');
+  assert.ok(choice);
+  await engine.handle({...r,command:choice.command,argument:choice.argument});
+  assert.deepEqual(new Engine(root,path.join(tmp,'settings.json')).overrides[r.file],{version:'ncp-2.5',profiles:['RA']});
+  const docs=await engine.handle({...r,command:'new'});
+  const doc=docs.items.find((i:any)=>i.label==='NC profiles 2.5 / RA');
+  assert.ok(doc);
+  const text=doc.argument.text;
+  assert.match(text,/<dcterms:conformsTo>https:\/\/ap-voc\.cim4\.eu\/DatasetMetadata\/3\.0<\/dcterms:conformsTo>/);
+  assert.match(text,/<dcterms:conformsTo>https:\/\/ap-voc\.cim4\.eu\/RemedialAction\/2\.5<\/dcterms:conformsTo>/);
+  assert.doesNotMatch(text,/<md:FullModel|xmlns:md=/);
+  const selected=engine.analysis(text,path.join(tmp,'new-ra.xml'));
+  assert.equal(selected.isCim,true);
+  assert.equal(selected.index?.bundle.id,'ncp-2.5');
+  assert.deepEqual(selected.active.map(p=>p.keyword).sort(),['DM','RA']);
+  const validation=await engine.handle({...r,file:path.join(tmp,'new-ra.xml'),text,command:'validate'});
+  assert.ok(!validation.items.some((i:any)=>['xml','undeclared-prefix','unknown-header-profile'].includes(i.code)));
+ }finally{fs.rmSync(tmp,{recursive:true,force:true});}
+});
+
 test('worker honors validation.propertyReferences for files and selected datasets',async()=>{
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'cgmes-property-reference-'));
  try {

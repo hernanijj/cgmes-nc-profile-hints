@@ -156,11 +156,15 @@ export class ProfileIndex {
 export function indexForHeader(indexes: ProfileIndex[], uris: string[], cimNs?: string): ProfileIndex | undefined {
   if (!uris.length) return undefined;
   const sameNs = (i: ProfileIndex) => !!cimNs && i.bundle.namespaces['cim'] === cimNs;
+  const versionMatch = (i: ProfileIndex) => uris.some(uri => {
+    const version = /\/(\d+(?:\.\d+)+)(?:\/|#|$)/.exec(uri)?.[1];
+    return version === i.bundle.version;
+  });
   const best = (exact: boolean) => {
     const hits = indexes
       .map(i => ({ i, n: i.profilesForHeader(uris, exact).matched.length }))
       .filter(h => h.n > 0)
-      .sort((x, y) => Number(sameNs(y.i)) - Number(sameNs(x.i)) || y.n - x.n);
+      .sort((x, y) => Number(sameNs(y.i)) - Number(sameNs(x.i)) || y.n - x.n || Number(versionMatch(y.i)) - Number(versionMatch(x.i)));
     return hits[0]?.i;
   };
   return best(true) ?? best(false);
