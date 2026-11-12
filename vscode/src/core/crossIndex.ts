@@ -1,8 +1,9 @@
 // Index of the objects defined in the other files of a dataset (a CGM's EQ, SSH, TP, SV, or NC
 // profiles that reference each other), so references can be checked across files. Files are read
-// with a regular-expression scan of the object start tags instead of a full XML parse, and the scan
-// yields regularly so a large dataset never blocks the editor.
+// with regular-expression scans of object start tags and resource attributes instead of a full XML
+// parse, and the scan yields regularly so a large dataset never blocks the editor.
 
+import * as fs from 'fs';
 import { Analysis, isHeaderType, looksLikeCim } from './analysis';
 import { attr } from './xml';
 
@@ -11,6 +12,10 @@ export interface FileObjects {
   file: string;
   types: string[];
   ids: Map<string, number>;
+  /** Object start offsets keyed by normalized identifier. */
+  objectOffsets: Map<string, number>;
+  /** Normalized identifiers referenced by rdf:resource attributes. */
+  references: Set<string>;
   /** Identifiers of the file's own header (md:FullModel / dcat:Dataset), normalized. */
   models?: string[];
   /** Models the file depends on (md:Model.DependentOn, dcterms:requires/references), normalized. */
@@ -22,6 +27,8 @@ export interface FileObjects {
 }
 
 export interface CrossHit { type: string; file: string }
+
+export interface ReferenceLocation { offset: number; line: number; character: number; length: number }
 
 /** What validate() needs: where an identifier is defined outside the current file. */
 export interface DatasetLookup {
@@ -55,6 +62,7 @@ const HEADER_PROFILE = /<[A-Za-z_][\w.-]*:(?:Model\.profile|conformsTo)\b[^>]*>(
 const HEADER_TIME = /<[A-Za-z_][\w.-]*:(?:Model\.scenarioTime|startDate)\b[^>]*>([^<]+)</;
 const NS_DECL = /xmlns:([A-Za-z_][\w.-]*)\s*=\s*["']([^"']*)["']/g;
 const OBJECT_TAG = /<([A-Za-z_][\w.-]*):([A-Za-z_][\w.-]*)\s[^>]*?\brdf:(ID|about)\s*=\s*["']([^"']*)["']/g;
+const RESOURCE_ATTR = /\brdf:resource\s*=\s*(["'])([^"']*)\1/g;
 
 /** Yields to the event loop when a slice of work has taken longer than this. */
 const SLICE_MS = 25;
@@ -62,7 +70,7 @@ const tick = () => new Promise<void>(r => setImmediate(r));
 
 /**
  * Reads the object start tags of a CIM/XML text given in pieces (a file read in chunks, so a
- * large file is never held or decoded at once): identifier and class of every object.
+ * large file is never held or decoded at once): object identifiers, classes and referenced ids.
  */
 export class ObjectScanner {
   private carry = '';
@@ -71,12 +79,20 @@ export class ObjectScanner {
   private readonly types: string[] = [];
   private readonly typeIdx = new Map<string, number>();
   private readonly ids = new Map<string, number>();
+  private readonly objectOffsets = new Map<string, number>();
+  private readonly references = new Set<string>();
   private readonly models: string[] = [];
+  private readonly referenceHits: ReferenceLocation[] = [];
+  private inputLength = 0;
+  private line = 0;
+  private character = 0;
   /** Text after the root start tag until the header is complete (then undefined). */
   private head?: string = '';
   private readonly header: Pick<FileObjects, 'dependsOn' | 'profiles' | 'time'> = {};
 
-  constructor(private readonly file: string) {}
+  constructor(private readonly file: string, private readonly referenceTarget?: string) {}
+
+  get referenceLocations(): ReferenceLocation[] { return this.referenceHits; }
 
   /** False once the text turned out not to be CIM/XML (no rdf:RDF root near the start). */
   get ok(): boolean { return !this.notCim; }
@@ -84,6 +100,8 @@ export class ObjectScanner {
   push(chunk: string): void {
     if (this.notCim) return;
     let text = this.carry + chunk;
+    let textOffset = this.inputLength - this.carry.length;
+    this.inputLength += chunk.length;
     let fresh = chunk; // text not seen before (the carry was already given to readHeader)
     if (!this.ns) {
       const rootAt = text.indexOf('<rdf:RDF');
@@ -99,22 +117,37 @@ export class ObjectScanner {
       }
       this.ns = new Map();
       for (const m of text.slice(rootAt, rootEnd).matchAll(NS_DECL)) this.ns.set(m[1], m[2]);
+      this.scanReferences(text.slice(0, rootEnd + 1), textOffset);
       text = text.slice(rootEnd + 1);
+      textOffset += rootEnd + 1;
       fresh = text;
     }
     if (this.head !== undefined) this.readHeader(fresh);
     // Every complete start tag lies before the last '<' (attribute values cannot contain '<').
     const cut = text.lastIndexOf('<');
-    if (cut < 0) { this.carry = ''; return; }
+    if (cut < 0) {
+      this.scanReferences(text, textOffset);
+      this.carry = '';
+      return;
+    }
     this.carry = text.slice(cut);
-    this.scan(text.slice(0, cut));
+    const complete = text.slice(0, cut);
+    this.scanReferences(complete, textOffset);
+    this.scan(complete, textOffset);
   }
 
   end(): FileObjects | undefined {
-    if (this.carry && this.ns) this.scan(this.carry + ' ');
+    if (this.carry && this.ns) {
+      const offset = this.inputLength - this.carry.length;
+      this.scanReferences(this.carry + ' ', offset);
+      this.scan(this.carry + ' ', offset);
+    }
     if (this.head !== undefined && this.ns) this.readHeader('', true);
     this.carry = '';
-    return this.ns ? { file: this.file, types: this.types, ids: this.ids, models: this.models, ...this.header } : undefined;
+    return this.ns ? {
+      file: this.file, types: this.types, ids: this.ids, objectOffsets: this.objectOffsets,
+      references: this.references, models: this.models, ...this.header,
+    } : undefined;
   }
 
   /** Header facts, read once the header element is complete (or 64 KB in, whichever comes first). */
@@ -131,7 +164,44 @@ export class ObjectScanner {
     if (t) this.header.time = own(t[1].trim());
   }
 
-  private scan(text: string): void {
+  private scanReferences(text: string, offset: number): void {
+    const re = new RegExp(RESOURCE_ATTR.source, 'g');
+    let cursor = 0;
+    for (let m = re.exec(text); m; m = re.exec(text)) {
+      const valueStart = m.index + m[0].indexOf(m[1]) + 1;
+      const ref = normalizeRef(m[2]);
+      if (ref) {
+        if (this.referenceTarget === undefined) this.references.add(ref);
+        else if (ref === this.referenceTarget) {
+          this.advancePosition(text.slice(cursor, valueStart));
+          this.referenceHits.push({ offset: offset + valueStart, line: this.line, character: this.character, length: m[2].length });
+          this.advancePosition(text.slice(valueStart, m.index + m[0].length));
+          cursor = m.index + m[0].length;
+          continue;
+        }
+      }
+      if (this.referenceTarget !== undefined) {
+        this.advancePosition(text.slice(cursor, m.index + m[0].length));
+        cursor = m.index + m[0].length;
+      }
+    }
+    if (this.referenceTarget !== undefined) this.advancePosition(text.slice(cursor));
+  }
+
+  private advancePosition(text: string): void {
+    for (let i = 0; i < text.length; i++) {
+      const c = text.charCodeAt(i);
+      if (c === 13) {
+        this.line++;
+        this.character = 0;
+        if (text.charCodeAt(i + 1) === 10) i++;
+      } else if (c === 10) { this.line++; this.character = 0; }
+      else this.character++;
+    }
+  }
+
+  private scan(text: string, offset: number): void {
+    if (this.referenceTarget !== undefined) return;
     const ns = this.ns!;
     const re = new RegExp(OBJECT_TAG.source, 'g');
     for (let m = re.exec(text); m; m = re.exec(text)) {
@@ -143,6 +213,7 @@ export class ObjectScanner {
       // A copy: a substring would keep the whole 1 MB piece of the file it came from in memory.
       const key = Buffer.from(ref, 'utf8').toString('utf8');
       if (isHeaderType(type)) { this.models.push(key); continue; }
+      if (!this.objectOffsets.has(key)) this.objectOffsets.set(key, offset + m.index);
       let t = this.typeIdx.get(type);
       if (t === undefined) { t = this.types.length; this.types.push(type); this.typeIdx.set(type, t); }
       if (!this.ids.has(key)) this.ids.set(key, t);
@@ -166,11 +237,32 @@ export async function scanObjects(text: string, file: string, shouldStop: () => 
   return s.end();
 }
 
+/** Finds one reference in a file without parsing or retaining its XML tree. */
+export async function scanReferenceLocations(file: string, ref: string, shouldStop: () => boolean = () => false): Promise<ReferenceLocation[]> {
+  const target = normalizeRef(ref);
+  if (!target) return [];
+  const scanner = new ObjectScanner(file, target);
+  const stream = fs.createReadStream(file, { encoding: 'utf8', highWaterMark: 1 << 20 });
+  try {
+    for await (const chunk of stream) {
+      scanner.push(chunk as string);
+      if (!scanner.ok || shouldStop()) return [];
+      await tick();
+    }
+  } finally {
+    stream.destroy();
+  }
+  scanner.end();
+  return scanner.referenceLocations;
+}
+
 /** The same information taken from an analysis of a file open in the editor (always current). */
 export function objectsFromAnalysis(a: Analysis, file: string): FileObjects {
   const types: string[] = [];
   const typeIdx = new Map<string, number>();
   const ids = new Map<string, number>();
+  const objectOffsets = new Map<string, number>();
+  const references = new Set<string>();
   for (const o of a.objects) {
     if (!o.type) continue;
     const key = normalizeRef(o.id ?? o.about ?? '');
@@ -178,9 +270,15 @@ export function objectsFromAnalysis(a: Analysis, file: string): FileObjects {
     let t = typeIdx.get(o.type);
     if (t === undefined) { t = types.length; types.push(o.type); typeIdx.set(o.type, t); }
     if (!ids.has(key)) ids.set(key, t);
+    if (!objectOffsets.has(key)) objectOffsets.set(key, o.el.start);
+    for (const c of o.el.children) {
+      const value = attr(c, 'rdf:resource')?.value;
+      const ref = value && normalizeRef(value);
+      if (ref) references.add(ref);
+    }
   }
   const header = a.header && normalizeRef((attr(a.header, 'rdf:about') ?? attr(a.header, 'rdf:ID'))?.value ?? '');
-  return { file, types, ids, models: header ? [header] : [], dependsOn: normalizedDeps(a.dependsOn), profiles: a.headerProfiles };
+  return { file, types, ids, objectOffsets, references, models: header ? [header] : [], dependsOn: normalizedDeps(a.dependsOn), profiles: a.headerProfiles };
 }
 
 export function normalizedDeps(deps: readonly string[]): string[] {

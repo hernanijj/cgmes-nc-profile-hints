@@ -23,6 +23,7 @@ test('profile selection prefers exact header URIs, then the CIM namespace', () =
     ['http://iec.ch/TC57/CIM100#', 'http://example.org/SteadyStateHypothesis-EU/9.9', 'cgmes-3.0', 'SSH'],
     ['http://iec.ch/TC57/2013/CIM-schema-cim16#', 'http://example.org/SteadyStateHypothesis-EU/9.9', 'cgmes-2.4.15', 'SSH'],
     ['https://cim.ucaiug.io/ns#', 'https://ap-voc.cim4.eu/AssessedElement/2.4', 'ncp-2.4', 'AE'],
+    ['https://cim.ucaiug.io/ns#', 'https://ap-voc.cim4.eu/RemedialAction/2.5', 'ncp-2.5', 'RA'],
   ];
   for (const [ns, uri, id, keyword] of cases) {
     const text = `<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cim="${ns}" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#"><md:FullModel rdf:about="urn:uuid:model"><md:Model.profile>${uri}</md:Model.profile></md:FullModel></rdf:RDF>`;
@@ -107,6 +108,38 @@ test('NCP 2.2 RA diagnostics use namespaces and SHACL', () => {
   assert.equal(wrongNs.length, 2);
   assert.deepEqual(wrongNs[0].data?.replacements, ['nc:RemedialAction.kind']);
   assert.match(ps.find(p => p.code === 'datatype')!.message, /Boolean/);
+});
+
+test('NCP 2.5 RA sample resolves its profile and validates required properties', () => {
+  const text = fixture('ra-25.xml');
+  const a = run(text);
+  assert.equal(a.index?.bundle.id, 'ncp-2.5');
+  assert.deepEqual(a.active.map(p => p.keyword), ['RA']);
+  assert.equal(a.profileSource, 'header');
+
+  const ps = validate(a);
+  const schemaIssues = ps.filter(p => [
+    'unknown-class', 'unknown-property', 'wrong-namespace', 'datatype', 'enum-value', 'missing-required',
+  ].includes(p.code));
+  assert.deepEqual(schemaIssues, [], schemaIssues.map(p => p.message).join('\n'));
+
+  const broken = validate(run(text.replace(
+    '<nc:RemedialAction.normalAvailable>true</nc:RemedialAction.normalAvailable>',
+    '<nc:RemedialAction.normalAvailable>trueo</nc:RemedialAction.normalAvailable>',
+  )));
+  assert.ok(broken.some(p => p.code === 'datatype' && /Boolean/.test(p.message)));
+});
+
+test('NCP 2.5 completion uses the active profile namespace and required properties', () => {
+  const t = fixture('ra-25.xml');
+  const off = t.indexOf('</rdf:RDF>');
+  const text = t.slice(0, off) + '<' + t.slice(off);
+  const items = complete(run(text), off + 1, { insertRequired: true });
+  const action = items.find(i => i.label === 'nc:GridStateAlterationRemedialAction');
+  assert.ok(action, 'NCP 2.5 remedial-action class item');
+  assert.match(action!.insertText, /rdf:ID="_/);
+  assert.match(action!.insertText, /nc:GridStateAlterationRemedialAction\.isActivationRestricted/);
+  assert.match(action!.insertText, /nc:RemedialAction\.kind rdf:resource=/);
 });
 
 test('completion offers classes at top level with required properties', () => {

@@ -150,6 +150,7 @@ export function namespacesFor(index: ProfileIndex, profiles: ProfileData[]): [st
   const used = new Set<string>([NS.rdf, NS.md]);
   const hp = headerProfile(index);
   const metadataProfile = !hp ? datasetMetadataProfile(index) : undefined;
+  if (metadataProfile) used.add('http://purl.org/dc/terms/');
   for (const p of [...profiles, ...(hp ? [hp] : metadataProfile ? [metadataProfile] : [])]) {
     for (const c of Object.values(p.classes)) if (c.concrete) used.add(namespaceOf(c.uri));
     for (const pr of Object.values(p.properties)) if (pr.used) used.add(namespaceOf(pr.uri));

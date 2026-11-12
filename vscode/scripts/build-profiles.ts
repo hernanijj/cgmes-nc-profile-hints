@@ -13,6 +13,7 @@ const PACKAGES: (BundleMeta & { dir: string })[] = [
   { id: 'cgmes-3.0', family: 'CGMES', version: '3.0', label: 'CGMES 3.0', idStyle: 'rdfID', dir: 'source-schemas/cgmes/3.0' },
   { id: 'ncp-2.2', family: 'NCP', version: '2.2', label: 'NC profiles 2.2', idStyle: 'rdfID', dir: 'source-schemas/ncp/2.2' },
   { id: 'ncp-2.4', family: 'NCP', version: '2.4', label: 'NC profiles 2.4', idStyle: 'rdfID', dir: 'source-schemas/ncp/2.4' },
+  { id: 'ncp-2.5', family: 'NCP', version: '2.5', label: 'NC profiles 2.5', idStyle: 'rdfID', dir: 'source-schemas/ncp/2.5' },
 ];
 
 function walk(dir: string, ext: RegExp): SourceFile[] {
