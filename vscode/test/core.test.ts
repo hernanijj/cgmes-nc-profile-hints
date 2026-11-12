@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import * as assert from 'node:assert/strict';
 import { fixture, indexes, run } from './helpers';
@@ -7,7 +8,7 @@ import { analyze, looksLikeCim } from '../src/core/analysis';
 import { parsePropertyReferenceList } from '../src/core/propertyReference';
 import { DEFAULT_VALIDATE_OPTIONS, explainUuid, problemsForEditor, validate } from '../src/core/validate';
 import { complete } from '../src/core/complete';
-import { hover } from '../src/core/hover';
+import { hover, referencesTo } from '../src/core/hover';
 import { parseXml, elementAt } from '../src/core/xml';
 
 const codes = (text: string) => validate(run(text)).map(p => p.code);
@@ -217,7 +218,7 @@ test('the editor gets one summary for many cross-file references and never more 
 });
 
 // ---- Cross-file references ----------------------------------------------------------------
-import { ObjectScanner, datasetLookup, dependencyClosure, normalizeRef, objectsFromAnalysis, scanObjects } from '../src/core/crossIndex';
+import { ObjectScanner, datasetLookup, dependencyClosure, normalizeRef, objectsFromAnalysis, scanObjects, scanReferenceLocations } from '../src/core/crossIndex';
 
 const CIM16 = 'xmlns:cim="http://iec.ch/TC57/2013/CIM-schema-cim16#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"';
 const header = (id: string, profile: string, deps: string[] = []) =>
@@ -250,11 +251,47 @@ test('scanObjects reads ids, classes and the model id without a full parse', asy
   const o = (await scanObjects(EQ, 'eq.xml'))!;
   assert.equal(o.ids.size, 3);
   assert.equal(o.types[o.ids.get('line1')!], 'http://iec.ch/TC57/2013/CIM-schema-cim16#ACLineSegment');
+  assert.equal(o.objectOffsets.get('line1'), EQ.indexOf('<cim:ACLineSegment rdf:ID="_line1"'));
   assert.deepEqual(o.models, [EQ_ID]);
   // The live form (from an open editor) agrees with the scan.
   const live = objectsFromAnalysis(run(EQ), 'eq.xml');
   assert.deepEqual([...live.ids.keys()].sort(), [...o.ids.keys()].sort());
+  assert.equal(live.objectOffsets.get('line1'), o.objectOffsets.get('line1'));
   assert.deepEqual(live.models, [EQ_ID]);
+});
+
+test('the scanner indexes references and locates them across chunks', async () => {
+  const text = tp([EQ_ID]);
+  const parsed = analyze(text, { indexes });
+  const localReferences = referencesTo(parsed, 'urn:uuid:line1');
+  assert.equal(localReferences.length, 1);
+  assert.equal(text.slice(localReferences[0].start, localReferences[0].end), '#_line1');
+  const uri = 'http://example.org/object#remote';
+  const absolute = `<rdf:RDF xmlns:cim="http://iec.ch/TC57/2013/CIM-schema-cim16#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cim:BaseVoltage rdf:about="${uri}"><cim:BaseVoltage.BaseVoltage rdf:resource="${uri}"/></cim:BaseVoltage></rdf:RDF>`;
+  assert.equal(referencesTo(analyze(absolute, { indexes }), uri).length, 1);
+
+  const indexed = new ObjectScanner('tp.xml');
+  for (let i = 0; i < text.length; i += 23) indexed.push(text.slice(i, i + 23));
+  const objects = indexed.end()!;
+  assert.ok(objects.references.has('line1'));
+
+  const target = new ObjectScanner('tp.xml', 'line1');
+  for (let i = 0; i < text.length; i += 23) target.push(text.slice(i, i + 23));
+  target.end();
+  const offset = text.indexOf('#_line1');
+  const before = text.slice(0, offset);
+  const line = (before.match(/\n/g) ?? []).length;
+  const character = offset - before.lastIndexOf('\n') - 1;
+  assert.deepEqual(target.referenceLocations, [{ offset, line, character, length: '#_line1'.length }]);
+
+  const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'cgmes-nav-'));
+  const file = path.join(folder, 'tp.xml');
+  try {
+    fs.writeFileSync(file, text);
+    assert.deepEqual(await scanReferenceLocations(file, '#_line1'), [{ offset, line, character, length: '#_line1'.length }]);
+  } finally {
+    fs.rmSync(folder, { recursive: true, force: true });
+  }
 });
 
 test('references into another file: wrong class and dangling are reported', async () => {
@@ -343,7 +380,7 @@ test('automatic dataset: dependencies are followed from model to model and prefe
   // Another EQ in the folder (another version) defines _line1 as a BaseVoltage.
   const other = (await scanObjects(EQ.replace(EQ_ID, '55555555-5555-4555-8555-555555555555').replace('cim:ACLineSegment rdf:ID="_line1"', 'cim:BaseVoltage rdf:ID="_line1"').replace('</cim:ACLineSegment>', '</cim:BaseVoltage>'), 'eq-old.xml'))!;
   const tpo = (await scanObjects(tp([EQ_ID]), 'tp.xml'))!;
-  const sv = { file: 'sv.xml', types: [], ids: new Map<string, number>(), models: ['sv'], dependsOn: ['22222222-2222-4222-8222-222222222222'] };
+  const sv = { file: 'sv.xml', types: [], ids: new Map<string, number>(), objectOffsets: new Map<string, number>(), references: new Set<string>(), models: ['sv'], dependsOn: ['22222222-2222-4222-8222-222222222222'] };
   const closure = dependencyClosure(sv.dependsOn, [eq, other, tpo]);
   assert.deepEqual(closure.files.map(f => f.file), ['tp.xml', 'eq.xml']);
   assert.deepEqual(closure.missing, []);

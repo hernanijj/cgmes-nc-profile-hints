@@ -25,6 +25,8 @@ function sameObjects(a: FileObjects, b: FileObjects): boolean {
     const u = b.ids.get(id);
     if (u === undefined || a.types[t] !== b.types[u]) return false;
   }
+  if (a.references.size !== b.references.size) return false;
+  for (const ref of a.references) if (!b.references.has(ref)) return false;
   return true;
 }
 
@@ -186,6 +188,15 @@ export class DatasetService implements vscode.Disposable {
     const all = this.filesIn(folders) ?? new Map<string, Entry>();
     for (const [k, p] of this.selected ?? []) if (!all.has(k)) all.set(k, { path: p, objects: undefined! });
     return [...all.values()].sort((a, b) => a.path.localeCompare(b.path));
+  }
+
+  /** Current object indexes for the explicitly selected dataset, or undefined until it is ready. */
+  selectedObjects(file: string): FileObjects[] | undefined {
+    if (!this.selected?.has(key(file))) return undefined;
+    const members = [...this.selected.values()];
+    const all = this.filesIn([...new Set(members.map(p => path.dirname(p)))]);
+    if (!all) return undefined;
+    return members.map(p => all.get(key(p))?.objects).filter((o): o is FileObjects => !!o);
   }
 
   /** Waits (at most timeoutMs) until the folders of a file are indexed. */

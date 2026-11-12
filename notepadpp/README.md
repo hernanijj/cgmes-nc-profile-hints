@@ -11,7 +11,7 @@ Bundled profiles cover **CGMES 2.4.15**, **CGMES 3.0**, **NCP 2.2** and **NCP 2.
 3. Copy the entire `CGMESNotepad` directory into your Notepad++ `plugins` directory. The layout must be `plugins/CGMESNotepad/CGMESNotepad.dll`, alongside `node.exe`, `worker.cjs`, and `profiles/`.
 4. Restart **64-bit** Notepad++. Open Plugins → CGMES & NC Profile Hints.
 
-This build was not installed into the user's Notepad++ and has not been exercised in the real Notepad++ UI. A hidden Windows host smoke test verified the DLL ABI, worker startup, IPC, completion insertion, Tab navigation, both-view buffer capture/restoration and shutdown. It remains a development build pending real-editor UI acceptance.
+The build has since been installed and confirmed working in the user's Notepad++ UI. A hidden Windows host smoke test also verified the DLL ABI, worker startup, IPC, completion insertion, Tab navigation, both-view buffer capture/restoration and shutdown. Real-editor use is confirmed; broader testing of all features and edge cases may still be needed.
 
 ## Use
 
@@ -93,7 +93,7 @@ Build the host smoke test with `g++ -std=c++17 -static test/native-smoke.cpp -o 
 
 ## Responsiveness and docking update
 
-Issues and menu selections now use Notepad++ docking (left by default). Worker replies are read in 64 KB chunks; diagnostic line/byte positions are calculated in a single ordered pass. Interactive requests take priority over queued background validation. Native host tests cover profile menu results, docking registration and hover calltips; real Notepad++ UI acceptance remains necessary.
+Issues and menu selections now use Notepad++ docking (left by default). Worker replies are read in 64 KB chunks; diagnostic line/byte positions are calculated in a single ordered pass. Interactive requests take priority over queued background validation. Native host tests cover profile menu results, docking registration and hover calltips; the user has also confirmed the plugin works in the real Notepad++ UI.
 
 ## CGMES 3.0 and pane refresh fix
 
