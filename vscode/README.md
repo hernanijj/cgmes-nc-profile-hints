@@ -1,11 +1,11 @@
 # CGMES & NC Profile Hints
 
 A VS Code extension that guides you while writing CIM/XML (RDF/XML) instance files for
-**CGMES 2.4.15**, **CGMES 3.0** and the ENTSO-E **network code profiles (NCP) 2.2**. All hints come from the
+**CGMES 2.4.15**, **CGMES 3.0** and the ENTSO-E **network code profiles (NCP) 2.2 and 2.5**. All hints come from the
 official RDFS profile definitions and from the SHACL constraints (for CGMES 2.4.15, the ENTSO-E
 QoCDC "EnhancedAppLibRDFS24" shapes; for CGMES 3.0, the ENTSO-E Application Profiles Library shapes).
 
-For a concise introduction with examples, see the [presentation page](./APRESENTACAO.md).
+For a concise introduction with examples, see `APRESENTACAO.md` in the project source.
 
 ## What it does
 
@@ -65,7 +65,9 @@ For a concise introduction with examples, see the [presentation page](./APRESENT
   panel shows the same split in its source column (`CGMES schema`, `CGMES SHACL`, `CGMES schema + SHACL`, …). Click an issue to jump to it. The badge shows the total. Unlike the Problems panel, it also
   lists hints such as unresolved references. **CGMES: Show issues of this file** opens it.
 - **Outline** of the objects grouped by class, **Go to Definition** and **Find References** for
-  `rdf:resource` links.
+  `rdf:resource` links. With a selected dataset, navigation searches all selected files; in automatic
+  mode it remains within the current file. Other files are located from the background index, and
+  reference positions are streamed only when requested.
 - A status bar entry shows the version and profile in use; click it to change them for the file.
 
 ## How the version and profile are chosen
@@ -95,7 +97,7 @@ so a file without a header is not flooded with warnings.
 
 | Setting | Default | |
 |---|---|---|
-| `cgmes.version` | `auto` | Force `cgmes-2.4.15`, `cgmes-3.0` or `ncp-2.2` (or the id of a folder you added). |
+| `cgmes.version` | `auto` | Force `cgmes-2.4.15`, `cgmes-3.0`, `ncp-2.2` or `ncp-2.5` (or the id of a folder you added). |
 | `cgmes.schemaFolders` | `[]` | Extra RDFS (+ SHACL `.ttl`) folders, e.g. `[{"folder": "C:/schemas/ncp/2.4.1", "id": "ncp-2.4.1", "label": "NC profiles 2.4.1"}]`. |
 | `cgmes.propertyReferenceList` | `""` | Path to a copy of the ENTSO-E PropertyReference list (RDF, Turtle, JSON, HTML, CSV or one `Class.property` per line). A file named `profiles/property-references.*` inside the extension is used when this is empty. |
 | `cgmes.idStyle` | `auto` | `rdfID` or `urnUuid` for new objects. |

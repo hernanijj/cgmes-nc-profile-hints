@@ -79,7 +79,8 @@ a regular-expression scan of start tags, read in 1 MB pieces with pauses, cached
 - **Hover**: description, inheritance, data type and unit, multiplicity, enum values, profiles, SHACL rules.
 - **Quick fixes**: namespace / property / enum / PropertyReference replacements, declare a missing `xmlns`,
   insert missing required properties.
-- **Navigation**: outline grouped by class, Go to Definition and Find References for `rdf:resource`.
+- **Navigation**: outline grouped by class, Go to Definition and Find References for `rdf:resource`;
+  both search every file in an explicitly selected dataset, and stay file-local in automatic mode.
 
 ## Views and commands
 - **CIM Issues** (Explorer): sections Schema (RDFS), SHACL, Cross-file references, Reference data, File and identifiers; inside each,

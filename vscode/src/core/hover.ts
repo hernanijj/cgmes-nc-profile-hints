@@ -2,6 +2,7 @@
 
 import { Analysis, CimObject, isHeaderType, objectOf, qname } from './analysis';
 import { classMarkdown, propMarkdown } from './docs';
+import { normalizeRef } from './crossIndex';
 import { localName } from './model';
 import { elementAt, expandName } from './xml';
 
@@ -55,26 +56,36 @@ export function objectSummary(a: Analysis, o: CimObject): string {
 
 /** Target object of the reference under the cursor. */
 export function definitionAt(a: Analysis, offset: number): CimObject | undefined {
+  const ref = referenceAt(a, offset);
+  return ref ? a.refs.get(ref)?.[0] : undefined;
+}
+
+/** Identifier in the rdf:resource value under the cursor. */
+export function referenceAt(a: Analysis, offset: number): string | undefined {
   const el = elementAt(a.doc, offset);
   const at = el?.attrs.find(x => x.name === 'rdf:resource' && offset >= x.valueStart && offset <= x.valueEnd);
-  return at ? a.refs.get(at.value.trim())?.[0] : undefined;
+  return at?.value.trim();
 }
 
 /** All rdf:resource attributes pointing at the object under the cursor (or referenced at cursor). */
 export function referencesAt(a: Analysis, offset: number): { start: number; end: number }[] {
-  let target = definitionAt(a, offset);
-  if (!target) {
+  const ref = referenceAt(a, offset);
+  if (ref) return referencesTo(a, ref);
+  const target = (() => {
     const el = elementAt(a.doc, offset);
-    target = objectOf(a, el);
-  }
-  if (!target) return [];
-  const keys = new Set<string>();
-  if (target.id !== undefined) keys.add('#' + target.id);
-  if (target.about !== undefined) keys.add(target.about);
+    return objectOf(a, el);
+  })();
+  const id = target?.id ?? target?.about;
+  return id ? referencesTo(a, id) : [];
+}
+
+/** All rdf:resource attributes in this file that identify the given object. */
+export function referencesTo(a: Analysis, ref: string): { start: number; end: number }[] {
+  const key = normalizeRef(ref);
   const out: { start: number; end: number }[] = [];
   for (const o of a.objects) for (const c of o.el.children) {
     const r = c.attrs.find(x => x.name === 'rdf:resource');
-    if (r && keys.has(r.value.trim())) out.push({ start: r.valueStart, end: r.valueEnd });
+    if (r && (key ? normalizeRef(r.value) === key : r.value.trim() === ref.trim())) out.push({ start: r.valueStart, end: r.valueEnd });
   }
   return out;
 }

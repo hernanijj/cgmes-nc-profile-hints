@@ -4,12 +4,13 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { Analysis, analyze, looksLikeCim, objectOf, qname } from './core/analysis';
 import { complete, CompletionResult, ItemKind } from './core/complete';
-import { definitionAt, hover, referencesAt } from './core/hover';
+import { definitionAt, hover, referenceAt, referencesAt, referencesTo } from './core/hover';
+import { FileObjects, normalizeRef, ReferenceLocation, scanReferenceLocations } from './core/crossIndex';
 import { localName } from './core/model';
 import { documentSnippet, propertySnippet } from './core/templates';
 import { DEFAULT_VALIDATE_OPTIONS, Problem, problemsForEditor, validate, ValidateOptions } from './core/validate';
 import { elementAt } from './core/xml';
-import { DatasetService } from './datasetService';
+import { DatasetService, key as datasetFileKey } from './datasetService';
 import { DatasetUi } from './datasetUi';
 import { IssuesView, revealIssue, sourceLabel } from './issuesView';
 import { ProfileStore } from './profileStore';
@@ -231,6 +232,42 @@ export async function activate(context: vscode.ExtensionContext) {
     ui.refresh();
   }, context.workspaceState);
   context.subscriptions.push(dataset);
+
+  const referenceLocationCache = new Map<string, { mtimeMs: number; size: number; locations: ReferenceLocation[] }>();
+  const referenceLocationsOnDisk = async (file: string, ref: string): Promise<ReferenceLocation[]> => {
+    const stat = await fs.promises.stat(file);
+    const cacheKey = `${datasetFileKey(file)}\0${ref}`;
+    const cached = referenceLocationCache.get(cacheKey);
+    if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) return cached.locations;
+    const locations = await scanReferenceLocations(file, ref);
+    referenceLocationCache.delete(cacheKey);
+    referenceLocationCache.set(cacheKey, { mtimeMs: stat.mtimeMs, size: stat.size, locations });
+    if (referenceLocationCache.size > 128) referenceLocationCache.delete(referenceLocationCache.keys().next().value!);
+    return locations;
+  };
+
+  const navigationDataset = async (doc: vscode.TextDocument): Promise<{ objects: FileObjects[]; analyses: Map<string, Analysis>; invalid: Set<string> } | undefined> => {
+    if (doc.uri.scheme !== 'file' || !dataset.isSelected(doc.uri.fsPath)) return undefined;
+    const selected = dataset.selection ?? [];
+    await dataset.whenAllReady(selected, 5000);
+    const analyses = new Map<string, Analysis>();
+    const invalid = new Set<string>();
+    for (const open of vscode.workspace.textDocuments) {
+      if (open.uri.scheme !== 'file' || !dataset.isSelected(open.uri.fsPath)) continue;
+      const k = datasetFileKey(open.uri.fsPath);
+      if (isCandidate(open)) {
+        const a = getAnalysis(open);
+        if (a.isCim) { analyses.set(k, a); dataset.setLive(open.uri.fsPath, a); }
+        else { dataset.removeLive(open.uri.fsPath); invalid.add(k); }
+      } else { dataset.removeLive(open.uri.fsPath); invalid.add(k); }
+    }
+    const objects = dataset.selectedObjects(doc.uri.fsPath);
+    if (!objects) {
+      void vscode.window.showInformationMessage('The selected CGMES dataset is still indexing. Try navigation again shortly.');
+      return undefined;
+    }
+    return { objects, analyses, invalid };
+  };
 
   /** What a validation depended on besides the file's own text. */
   const generation = () => `${configGeneration}:${dataset.generation}`;
@@ -467,17 +504,72 @@ export async function activate(context: vscode.ExtensionContext) {
     }),
 
     vscode.languages.registerDefinitionProvider(SELECTOR, {
-      provideDefinition(doc, pos) {
+      async provideDefinition(doc, pos) {
         if (!isCandidate(doc)) return undefined;
-        const o = definitionAt(getAnalysis(doc), doc.offsetAt(pos));
-        return o ? new vscode.Location(doc.uri, doc.positionAt(o.el.start)) : undefined;
+        const a = getAnalysis(doc);
+        const local = definitionAt(a, doc.offsetAt(pos));
+        if (local) return new vscode.Location(doc.uri, doc.positionAt(local.el.start));
+        const ref = referenceAt(a, doc.offsetAt(pos));
+        const key = ref && normalizeRef(ref);
+        if (!key) return undefined;
+        const selected = await navigationDataset(doc);
+        if (!selected) return undefined;
+        for (const f of selected.objects) {
+          const fileKey = datasetFileKey(f.file);
+          if (selected.invalid.has(fileKey)) continue;
+          const current = selected.analyses.get(fileKey);
+          const target = current?.objects.find(o => normalizeRef(o.id ?? o.about ?? '') === key);
+          const offset = current ? target?.el.start : f.objectOffsets.get(key);
+          if (offset === undefined) continue;
+          try {
+            const destination = vscode.workspace.textDocuments.find(d => d.uri.scheme === 'file' && datasetFileKey(d.uri.fsPath) === fileKey)
+              ?? await vscode.workspace.openTextDocument(vscode.Uri.file(f.file));
+            return new vscode.Location(destination.uri, destination.positionAt(offset));
+          } catch (e) {
+            log.appendLine(`Definition navigation to ${f.file} failed: ${(e as Error).message}`);
+            void vscode.window.showWarningMessage(`CGMES could not open ${path.basename(f.file)}. See the CGMES output for details.`);
+            return undefined;
+          }
+        }
+        return undefined;
       },
     }),
 
     vscode.languages.registerReferenceProvider(SELECTOR, {
-      provideReferences(doc, pos) {
+      async provideReferences(doc, pos) {
         if (!isCandidate(doc)) return undefined;
-        return referencesAt(getAnalysis(doc), doc.offsetAt(pos)).map(r => new vscode.Location(doc.uri, new vscode.Range(doc.positionAt(r.start), doc.positionAt(r.end))));
+        const a = getAnalysis(doc);
+        const rawRef = referenceAt(a, doc.offsetAt(pos));
+        const object = rawRef ? undefined : objectOf(a, elementAt(a.doc, doc.offsetAt(pos)));
+        const key = normalizeRef(rawRef ?? object?.id ?? object?.about ?? '');
+        if (!key) return referencesAt(a, doc.offsetAt(pos)).map(r => new vscode.Location(doc.uri, new vscode.Range(doc.positionAt(r.start), doc.positionAt(r.end))));
+        const local = referencesTo(a, key).map(r => new vscode.Location(doc.uri, new vscode.Range(doc.positionAt(r.start), doc.positionAt(r.end))));
+        const selected = await navigationDataset(doc);
+        if (!selected) return local;
+        const currentFile = datasetFileKey(doc.uri.fsPath);
+        const failures: string[] = [];
+        for (const f of selected.objects) {
+          const fileKey = datasetFileKey(f.file);
+          if (fileKey === currentFile || selected.invalid.has(fileKey) || !f.references.has(key)) continue;
+          const current = selected.analyses.get(fileKey);
+          if (current) {
+            for (const r of referencesTo(current, key)) {
+              const destination = vscode.workspace.textDocuments.find(d => d.uri.scheme === 'file' && datasetFileKey(d.uri.fsPath) === datasetFileKey(f.file));
+              if (destination) local.push(new vscode.Location(destination.uri, new vscode.Range(destination.positionAt(r.start), destination.positionAt(r.end))));
+            }
+            continue;
+          }
+          try {
+            for (const r of await referenceLocationsOnDisk(f.file, key)) {
+              local.push(new vscode.Location(vscode.Uri.file(f.file), new vscode.Range(r.line, r.character, r.line, r.character + r.length)));
+            }
+          } catch (e) {
+            log.appendLine(`Reference search in ${f.file} failed: ${(e as Error).message}`);
+            failures.push(path.basename(f.file));
+          }
+        }
+        if (failures.length) void vscode.window.showWarningMessage(`CGMES could not search references in ${failures.join(', ')}. See the CGMES output for details.`);
+        return local;
       },
     }),
 
