@@ -1,6 +1,6 @@
 {
   "name": "cgmes-cim-hints",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Completions, hovers and validation for CIM/XML instance files following CGMES 2.4.15, CGMES 3.0 and ENTSO-E network code profiles (NCP) 2.2 and 2.5.",
   "main": "./dist/extension.js",
   "scripts": {
