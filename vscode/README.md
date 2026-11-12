@@ -1,7 +1,7 @@
 # CGMES & NC Profile Hints
 
 A VS Code extension that guides you while writing CIM/XML (RDF/XML) instance files for
-**CGMES 2.4.15**, **CGMES 3.0** and the ENTSO-E **network code profiles (NCP) 2.2**. All hints come from the
+**CGMES 2.4.15**, **CGMES 3.0** and the ENTSO-E **network code profiles (NCP) 2.2 and 2.5**. All hints come from the
 official RDFS profile definitions and from the SHACL constraints (for CGMES 2.4.15, the ENTSO-E
 QoCDC "EnhancedAppLibRDFS24" shapes; for CGMES 3.0, the ENTSO-E Application Profiles Library shapes).
 
@@ -97,7 +97,7 @@ so a file without a header is not flooded with warnings.
 
 | Setting | Default | |
 |---|---|---|
-| `cgmes.version` | `auto` | Force `cgmes-2.4.15`, `cgmes-3.0` or `ncp-2.2` (or the id of a folder you added). |
+| `cgmes.version` | `auto` | Force `cgmes-2.4.15`, `cgmes-3.0`, `ncp-2.2` or `ncp-2.5` (or the id of a folder you added). |
 | `cgmes.schemaFolders` | `[]` | Extra RDFS (+ SHACL `.ttl`) folders, e.g. `[{"folder": "C:/schemas/ncp/2.4.1", "id": "ncp-2.4.1", "label": "NC profiles 2.4.1"}]`. |
 | `cgmes.propertyReferenceList` | `""` | Path to a copy of the ENTSO-E PropertyReference list (RDF, Turtle, JSON, HTML, CSV or one `Class.property` per line). A file named `profiles/property-references.*` inside the extension is used when this is empty. |
 | `cgmes.idStyle` | `auto` | `rdfID` or `urnUuid` for new objects. |

@@ -1,7 +1,7 @@
 {
   "name": "cgmes-cim-hints",
-  "version": "0.1.12",
-  "description": "Completions, hovers and validation for CIM/XML instance files following CGMES 2.4.15, CGMES 3.0 and ENTSO-E network code profiles (NCP) 2.2.",
+  "version": "0.1.13",
+  "description": "Completions, hovers and validation for CIM/XML instance files following CGMES 2.4.15, CGMES 3.0 and ENTSO-E network code profiles (NCP) 2.2 and 2.5.",
   "main": "./dist/extension.js",
   "scripts": {
     "build:profiles": "tsc -p . && node out/scripts/build-profiles.js",
@@ -128,7 +128,7 @@
         "cgmes.version": {
           "type": "string",
           "default": "auto",
-          "description": "CIM version used for hints: \"auto\" detects it from namespaces and the header, or a bundle id such as \"cgmes-2.4.15\", \"cgmes-3.0\" or \"ncp-2.2\"."
+          "description": "CIM version used for hints: \"auto\" detects it from namespaces and the header, or a bundle id such as \"cgmes-2.4.15\", \"cgmes-3.0\", \"ncp-2.2\" or \"ncp-2.5\"."
         },
         "cgmes.schemaFolders": {
           "type": "array",
