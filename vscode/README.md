@@ -1,4 +1,4 @@
-![CGMES & NC Profile Hints logo](../logo.svg)
+![CGMES & NC Profile Hints logo](../logo.png)
 
 # CGMES & NC Profile Hints
 

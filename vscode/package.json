@@ -2,6 +2,10 @@
   "name": "cgmes-cim-hints",
   "version": "0.1.14",
   "description": "Completions, hovers and validation for CIM/XML instance files following CGMES 2.4.15, CGMES 3.0 and ENTSO-E network code profiles (NCP) 2.2 and 2.5.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hernanijj/cgmes-nc-profile-hints.git"
+  },
   "main": "./dist/extension.js",
   "scripts": {
     "build:profiles": "tsc -p . && node out/scripts/build-profiles.js",
