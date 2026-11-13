@@ -179,7 +179,10 @@ test('completion offers properties of the enclosing object, required first', () 
 
 test('completion of rdf:resource suggests objects of the right type', () => {
   const t = fixture('eq-2415.xml');
-  const at = t.indexOf('rdf:resource="#_7e4b1f2a-1c1d-4e7b-9a10-0b6f8b0f0001"/>\n    <cim:ACLineSegment.foo') + 'rdf:resource="'.length;
+  const prefix = '<cim:ConductingEquipment.BaseVoltage rdf:resource="';
+  const start = t.indexOf(prefix);
+  assert.notEqual(start, -1);
+  const at = start + prefix.length;
   const items = complete(run(t), at, { insertRequired: true });
   assert.deepEqual(items.map(i => i.insertText), ['#_7e4b1f2a-1c1d-4e7b-9a10-0b6f8b0f0001']);
 });
