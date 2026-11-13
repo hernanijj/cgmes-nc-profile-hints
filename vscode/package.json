@@ -1,6 +1,6 @@
 {
-  "name": "cgmes-cim-hints",
-  "version": "0.1.14",
+  "name": "cgmes-cim-ncp-hints",
+  "version": "0.1.15",
   "icon": "images/logo.png",
   "galleryBanner": {
     "color": "#163A5F",
@@ -40,7 +40,7 @@
   "dependencies": {
     "n3": "^2.13.12"
   },
-  "displayName": "CGMES & NC Profile Hints",
+  "displayName": "CGMES CIM & Network Code Assistant",
   "publisher": "hernanijusto",
   "engines": {
     "vscode": "^1.85.0"

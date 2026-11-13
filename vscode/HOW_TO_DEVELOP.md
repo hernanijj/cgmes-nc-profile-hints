@@ -144,7 +144,7 @@ Replace `2.x` with the version, for example `2.4`. Run the commands in a termina
 11. Open `package.json`, raise `"version"` (for example `0.1.11` to `0.1.12`), and save.
 12. Run `npm test`.
 13. Press `F5` and open an NC 2.x file in the window that opens: the status bar shows `NC profiles 2.x`.
-14. Run `npm run package`. The extension is the new `cgmes-cim-hints-<version>.vsix` in the extension folder.
+14. Run `npm run package`. The extension is the new `cgmes-cim-ncp-hints-<version>.vsix` in the extension folder.
 
 For a CGMES version, do the same under `source-schemas/cgmes/<version>` with `family: 'CGMES'` and `idStyle: 'rdfID'`.
 

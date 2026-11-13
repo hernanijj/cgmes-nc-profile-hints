@@ -141,7 +141,7 @@ know they exist; run a full SHACL validator for those.
 npm install
 npm run build:profiles   # source-schemas/ -> profiles/*.json
 npm test                 # unit tests (no VS Code needed)
-npm run package          # dist/extension.js + cgmes-cim-hints-<version>.vsix
+npm run package          # dist/extension.js + cgmes-cim-ncp-hints-<version>.vsix
 ```
 
 Press F5 in VS Code with this folder open to start an Extension Development Host.
