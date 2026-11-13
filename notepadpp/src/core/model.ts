@@ -35,6 +35,8 @@ export interface ShaclInfo {
   datatype?: string;
   in?: string[];
   class?: string[];
+  /** Classes the referenced object may have (sh:in on the path ( property rdf:type )), any namespace. */
+  targetTypes?: string[];
   pattern?: string;
   minInclusive?: number;
   maxInclusive?: number;

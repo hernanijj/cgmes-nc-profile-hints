@@ -38,12 +38,16 @@ Each problem carries a code (search it in `src/core/validate.ts`) and the rule s
 | `fixed-value` | warning | attribute with a fixed value (`cims:isFixed`) has another value |
 | `datatype` | error | value does not match Float, Decimal, Integer, Boolean, Date, DateTime, DateTimeStamp, Duration, MonthDay, Time, URI |
 | `enum-value` | error | value is not in the enumeration, with quick fix |
-| `reference-type` | error | `rdf:resource` points to an object of the wrong class |
+| `reference-type` | error | `rdf:resource` points to an object of the wrong class; a class named in the property's SHACL value type list (`sh:in` on `( property rdf:type )`, any CIM namespace) is always accepted |
 
 ### SHACL
 - Constraints only SHACL imposes: `pattern`, `range` (min/max inclusive/exclusive), `max-length`, stricter
   `sh:minCount` / `sh:maxCount`, `sh:in`, `sh:class` (e.g. tap changer end must be a `PowerTransformerEnd`)
   and `sh:datatype` when the RDFS has none.
+- SHACL value type lists (`sh:in` on the path `( property rdf:type )`) accept the classes they name, from
+  CGMES 2.4.15, CGMES 3.0 or NC, even when the RDFS of the file's version does not give their inheritance
+  (an NC `PinOperationalLimit.OperationalLimit` pointing to a CGMES `CurrentLimit`). Classes not in the list
+  are left to the RDFS check, since the lists only name the classes of their own profile.
 - When the RDFS and SHACL both reject a value (data type, enumeration, reference type, counts), it is one
   problem with source `CGMES schema + SHACL` and `[also SHACL …: <shape message>]`, listed under both sections.
 - SPARQL-based shapes are not evaluated; they are listed in the class hover.

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.16
+
+- References are accepted when the target's class is in the SHACL value type list of the property
+  (`sh:in` on the path `( property rdf:type )`), in any namespace the list names: CGMES 2.4.15 (`cim16`),
+  CGMES 3.0 (`CIM100`) or NC. An NC `PinOperationalLimit.OperationalLimit` or `AssessedElement.OperationalLimit`
+  pointing to a `CurrentLimit`, `VoltageLimit`, `ActivePowerLimit`… of a CGMES model is no longer reported as
+  `reference-type`: the NC profiles declare these classes without their `OperationalLimit` superclass, so
+  the RDFS alone rejected them. The same holds for any other class the NC RDFS repeats without inheritance
+  (e.g. `TapChangerControl` as a `RegulatingControl`).
+- A class missing from such a list is still judged by the RDFS, as before (the lists only name the classes
+  of their own profile, e.g. `SvStatus.ConductingEquipment` lists only `CsConverter` and `VsConverter`). When
+  both reject it, the problem says so: `[also SHACL sh:in …]`.
+- The property hover shows the SHACL value types.
+
 ## 0.1.11
 
 - **CGMES 3.0** is bundled (`profiles/cgmes-3.0.json`, built from `source-schemas/cgmes/3.0`): the 11 RDFS2020

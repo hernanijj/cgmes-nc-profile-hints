@@ -424,9 +424,11 @@ function checkValue(a: Analysis, c: XmlElement, prop: PropDef, opts: ValidateOpt
   const local = a.refs.get(v);
   const isLocalRef = v.startsWith('#') || v.startsWith('urn:uuid:');
   let targetTypes: (string | undefined)[];
+  /** The target's classes as written in its file, before matching them to this version's classes. */
+  let writtenTypes: (string | undefined)[];
   let where = '';
   if (local) {
-    targetTypes = local.map(t => t.type);
+    targetTypes = writtenTypes = local.map(t => t.type);
   } else {
     const hits = isLocalRef ? a.dataset?.lookup(v) : undefined;
     if (!hits) {
@@ -451,12 +453,28 @@ function checkValue(a: Analysis, c: XmlElement, prop: PropDef, opts: ValidateOpt
     }
     // Another file may use another CIM version (an NC 2.2 AE pointing into a CGMES 2.4.15 EQ):
     // its classes are judged by the class of the same name in this version, when there is one.
+    writtenTypes = hits.map(h => h.type);
     targetTypes = hits.map(h => {
       if (index.classDef(h.type)) return h.type;
       const same = index.sameLocalName(h.type).filter(u => index.classDef(u));
       return same.length === 1 ? same[0] : h.type;
     });
     where = ` (defined in ${[...new Set(hits.map(h => h.file.replace(/^.*[\\/]/, '')))].join(', ')})`;
+  }
+  // NC and CGMES SHACL list the classes the target may have (sh:in on ( property rdf:type )), naming them in
+  // every namespace they accept (cim16 for CGMES 2.4.15, CIM100 for CGMES 3.0, nc). An object of a listed
+  // class is accepted even when the RDFS of this version does not tell its inheritance (an NC CurrentLimit has
+  // no superclass, so it would not be taken for an OperationalLimit). A class missing from the list is left to
+  // the RDFS check: the lists only name the classes of their own profile, so they miss valid targets defined in
+  // other profiles (SvStatus.ConductingEquipment lists only CsConverter and VsConverter).
+  const allowed = prop.shacl?.targetTypes;
+  let shaclRejects = false;
+  if (allowed?.length) {
+    const written = writtenTypes.filter((t): t is string => !!t);
+    // The same class in a namespace the list does not name (another CIM version) is accepted too.
+    const names = new Set(allowed.map(localName));
+    if (written.some(t => allowed.includes(t) || names.has(localName(t)))) return;
+    shaclRejects = written.length > 0;
   }
   // Only judge classes this version knows; a description in another profile may use a more general class.
   const expected = prop.shacl?.class?.length ? prop.shacl.class : prop.range ? [prop.range] : [];
@@ -478,7 +496,9 @@ function checkValue(a: Analysis, c: XmlElement, prop: PropDef, opts: ValidateOpt
     message: bySchema
       ? `${prop.label} must reference a ${localName(prop.range ?? expected[0])}, but ${v} is ${an(localName(t))}${where}.`
       : `SHACL requires ${prop.label} to reference a ${expected.map(localName).join(' or ')}, but ${v} is ${an(localName(t))}${where}.${shMsg('class')}` };
-  out.push(bySchema && byShacl ? alsoShacl(p, prop.shacl?.messages?.class, `sh:class ${prop.shacl!.class!.map(localName).join(' or ')}`) : p);
+  if (bySchema && byShacl) out.push(alsoShacl(p, prop.shacl?.messages?.class, `sh:class ${prop.shacl!.class!.map(localName).join(' or ')}`));
+  else if (bySchema && shaclRejects) out.push(alsoShacl(p, prop.shacl?.messages?.targetTypes, `sh:in ${[...new Set(allowed!.map(localName))].sort().join(', ')}`));
+  else out.push(p);
 }
 
 /**

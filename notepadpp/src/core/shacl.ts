@@ -85,7 +85,18 @@ export function parseShacl(text: string, extract: ShaclExtract = { byPath: {}, n
       continue;
     }
     const path = one(s, SH + 'path');
-    if (!path || path.startsWith('"') || path.startsWith('_:')) continue;
+    if (path?.startsWith('_:')) {
+      // sh:path ( property rdf:type ) with sh:in: the classes the property may point to (value type list).
+      const steps = list(path);
+      const inHead = one(s, SH + 'in');
+      if (steps.length === 2 && steps[1] === NS.rdf + 'type' && inHead) {
+        const info = (extract.byPath[steps[0]] ??= {});
+        info.targetTypes = list(inHead);
+        if (msg) (info.messages ??= {}).targetTypes = msg;
+      }
+      continue;
+    }
+    if (!path || path.startsWith('"')) continue;
     if (get(s, SH + 'inversePath').length) continue;
     const info = (extract.byPath[path] ??= {});
     const set = <K extends keyof ShaclInfo>(k: K, v: ShaclInfo[K] | undefined, kind: string) => {

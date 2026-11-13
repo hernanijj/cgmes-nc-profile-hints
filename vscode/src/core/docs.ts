@@ -39,6 +39,7 @@ export function propMarkdown(a: Analysis, p: PropDef): string {
   if (p.kind === 'association') {
     facts.push(`Value: \`rdf:resource="${a.idStyle === 'urnUuid' ? 'urn:uuid:…' : '#_…'}"\` pointing to a ${localName(p.range ?? '')}`);
     if (p.inverse) facts.push(`Inverse: ${localName(p.inverse)} (not exchanged)`);
+    if (p.shacl?.targetTypes?.length) facts.push(`SHACL value types: ${[...new Set(p.shacl.targetTypes.map(localName))].sort().map(c => '`' + c + '`').join(', ')}`);
   }
   if (p.fixed !== undefined) facts.push(`Fixed value: \`${p.fixed}\``);
   const sh = p.shacl;
