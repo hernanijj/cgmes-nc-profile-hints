@@ -1,3 +1,5 @@
+![CGMES & NC Profile Hints logo](logo.svg)
+
 # CGMES & NC Profile Hints for Notepad++
 
 Native **64-bit Windows / Notepad++** plugin, updated to the core of the adjacent VS Code extension **0.1.14**. The VS Code project is read-only during this build. No VS Code installation is required at runtime. Node.js and profile data are included in the portable distribution. The native plugin communicates with the Node worker using JSON lines over stdin/stdout; worker stdout is reserved for JSON responses.

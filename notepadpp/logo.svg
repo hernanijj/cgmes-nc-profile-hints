@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="220" viewBox="0 0 800 220" role="img" aria-labelledby="title description">
+  <title id="title">CGMES &amp; NC Profile Hints</title>
+  <desc id="description">A connected power-grid diagram on a document, representing CIM profile hints and validation.</desc>
+  <rect width="800" height="220" rx="24" fill="#10263D"/>
+
+  <g transform="translate(30 20)">
+    <rect x="0" y="0" width="180" height="180" rx="24" fill="#173B56"/>
+    <path d="M53 34h49l25 25v87H53z" fill="#F4F8FB"/>
+    <path d="M102 34v26h25" fill="none" stroke="#A8C2D3" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M69 91h22l14-17 17 17h-9l-12-11-12 15H69m0 22h19l13-14 14 14h7" fill="none" stroke="#178FA3" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="69" cy="91" r="6" fill="#E9A83A"/>
+    <circle cx="105" cy="74" r="6" fill="#178FA3"/>
+    <circle cx="122" cy="91" r="6" fill="#178FA3"/>
+    <circle cx="69" cy="113" r="6" fill="#178FA3"/>
+    <circle cx="122" cy="113" r="6" fill="#E9A83A"/>
+    <path d="m145 38 4 11 11 4-11 4-4 11-4-11-11-4 11-4z" fill="#F2B84B"/>
+  </g>
+
+  <text x="250" y="105" fill="#F4F8FB" font-family="Segoe UI, Arial, sans-serif" font-size="54" font-weight="700" letter-spacing="1">CGMES</text>
+  <text x="253" y="148" fill="#65C8D1" font-family="Segoe UI, Arial, sans-serif" font-size="25" font-weight="600" letter-spacing="2.1">&amp; NC PROFILE HINTS</text>
+  <path d="M253 169h112" stroke="#E9A83A" stroke-width="4" stroke-linecap="round"/>
+</svg>
