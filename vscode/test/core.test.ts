@@ -527,3 +527,21 @@ test('an NC file pointing into a CGMES 3.0 EQ has its references judged with the
   // A ConnectivityNode (not known to the NC profiles either) is not.
   assert.match(typeErrors('7c6b5a4f-3e2d-4c1b-9a0f-8e7d6c5b4a05').join('\n'), /must reference a ConductingEquipment, but .* is a ConnectivityNode \(defined in eq\.xml\)/);
 });
+
+test('NC references accept the classes their SHACL value type lists, from CGMES 2.4.15 or 3.0 (CurrentLimit as an OperationalLimit)', async () => {
+  const eq2415 = `<rdf:RDF ${CIM16}><cim:CurrentLimit rdf:ID="_cl16"/></rdf:RDF>`;
+  const eq30 = `<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <cim:CurrentLimit rdf:ID="_cl30"/><cim:Terminal rdf:ID="_t30"/></rdf:RDF>`;
+  const pin = (id: string, target: string) => `<nc:PinOperationalLimit rdf:about="urn:uuid:${id}"><nc:PinOperationalLimit.OperationalLimit rdf:resource="#${target}"/></nc:PinOperationalLimit>`;
+  const ra = fixture('ra-25.xml').replace('</rdf:RDF>', [
+    pin('a1a1a1a1-0000-4000-8000-000000000001', '_cl16'),
+    pin('a1a1a1a1-0000-4000-8000-000000000002', '_cl30'),
+    pin('a1a1a1a1-0000-4000-8000-000000000003', '_t30'),
+  ].join('\n') + '\n</rdf:RDF>');
+  const dataset = datasetLookup([(await scanObjects(eq2415, 'eq2415.xml'))!, (await scanObjects(eq30, 'eq30.xml'))!], 'ra.xml');
+  const wrong = validate(analyze(ra, { indexes, dataset })).filter(p => p.code === 'reference-type');
+  assert.equal(wrong.length, 1, JSON.stringify(wrong.map(p => p.message)));
+  assert.match(wrong[0].message, /#_t30 is a Terminal \(defined in eq30\.xml\)/);
+  assert.match(wrong[0].message, /also SHACL sh:in .*CurrentLimit/);
+  assert.deepEqual(wrong[0].rules, ['schema', 'shacl']);
+});

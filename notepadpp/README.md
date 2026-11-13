@@ -2,7 +2,7 @@
 
 # CGMES & NC Profile Hints for Notepad++
 
-Native **64-bit Windows / Notepad++** plugin, updated to the core of the adjacent VS Code extension **0.1.14**. The VS Code project is read-only during this build. No VS Code installation is required at runtime. Node.js and profile data are included in the portable distribution. The native plugin communicates with the Node worker using JSON lines over stdin/stdout; worker stdout is reserved for JSON responses.
+Native **64-bit Windows / Notepad++** plugin, updated to the core of the adjacent VS Code extension **0.1.16**. The VS Code project is read-only during this build. No VS Code installation is required at runtime. Node.js and profile data are included in the portable distribution. The native plugin communicates with the Node worker using JSON lines over stdin/stdout; worker stdout is reserved for JSON responses.
 
 Bundled profiles cover **CGMES 2.4.15**, **CGMES 3.0**, **NCP 2.2**, **NCP 2.4** and **NCP 2.5**, including version/profile choices. Automatic detection prefers exact header profile URIs before matching profile names, using the CIM namespace to disambiguate versions. NCP 2.4 and 2.5 use `https://cim.ucaiug.io/ns#` and `https://cim4.eu/ns/nc#`.
 
@@ -59,7 +59,7 @@ Set `version` to `auto`, `cgmes-2.4.15`, `cgmes-3.0`, `ncp-2.2`, `ncp-2.4` or `n
 
 | VS Code behavior | Notepad++ build |
 |---|---|
-| CGMES/NCP XML parsing, profile inference, RDFS/SHACL checks, reference data | Core synchronized with 0.1.14, excluding RDFS debug output; NCP 2.4 and 2.5 bundles included |
+| CGMES/NCP XML parsing, profile inference, RDFS/SHACL checks, reference data | Core synchronized with 0.1.16, excluding RDFS debug output; NCP 2.4 and 2.5 bundles included. References accept classes named in SHACL value type lists (`sh:in` on `( property rdf:type )`), e.g. a CGMES 2.4.15 or 3.0 `CurrentLimit` behind `PinOperationalLimit.OperationalLimit` |
 | Context completion, new IDs, required properties, enum/reference/value suggestions | Implemented, including Tab/Shift+Tab snippet fields and linked placeholder synchronization |
 | Class/property hover documentation | Same content; Markdown displayed as text |
 | Diagnostics and listed quick fixes | Implemented; one indicator color rather than severity-specific styling |
