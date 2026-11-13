@@ -1,3 +1,5 @@
+![CGMES & NC Profile Hints logo](logo.svg)
+
 # CGMES Editor Tools
 
 Local preparation copy of the CGMES and network-code profile tools for:

@@ -1,3 +1,5 @@
+![CGMES & NC Profile Hints logo](../logo.svg)
+
 # CGMES & NC Profile Hints
 
 A VS Code extension that guides you while writing CIM/XML (RDF/XML) instance files for

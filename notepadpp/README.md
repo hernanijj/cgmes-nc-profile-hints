@@ -1,4 +1,4 @@
-![CGMES & NC Profile Hints logo](logo.svg)
+![CGMES & NC Profile Hints logo](../logo.svg)
 
 # CGMES & NC Profile Hints for Notepad++
 
