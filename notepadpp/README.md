@@ -14,9 +14,7 @@ Bundled profiles cover **CGMES 2.4.15**, **CGMES 3.0**, **NCP 2.2**, **NCP 2.4**
 4. Restart **64-bit** Notepad++. Open Plugins → CGMES & NC Profile Hints.
 
 
-
 ## Use
-
 - Open `.xml`, `.rdf` or `.cimxml` for CIM hints. Validation runs only for `.xml` files; CIM `.rdf`/`.cimxml` files show **CIM validation requires a .xml file**, while generic RDF and schema/SHACL documents show **Not a supported CIM file** and receive no diagnostics. Edits trigger a background check after 700 ms. Profile status appears in the document-type status field; squiggles mark problems.
 - Use **Complete CIM/XML** (Ctrl+Space; change conflicts in Shortcut Mapper), or type `<` or `"`. Completion defaults include identifiers and required properties. Tab/Shift+Tab navigate snippet fields; repeated numeric placeholders synchronize when leaving a field. Escape exits snippet navigation. Value suggestions remain available via Ctrl+Space.
 - Hover after 700 ms, or choose **Show hover information**. Documentation appears in a plain-text Scintilla calltip.

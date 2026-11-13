@@ -4,7 +4,7 @@
 
 **CGMES & NC Profile Hints** is an extension that supports editing and reviewing CIM/XML (RDF/XML) files. It provides profile-aware suggestions and validation, helping you find inconsistencies earlier and navigate sets of related models.
 
-Compatible with **CGMES 2.4.15**, **CGMES 3.0**, and **ENTSO-E Network Code Profiles (NCP) 2.2**.
+Compatible with **CGMES 2.4.15**, **CGMES 3.0**, and **ENTSO-E Network Code Profiles (NCP) 2.2, 2.4 and 2.5**.
 
 ## What the extension offers
 
