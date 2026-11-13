@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: vscode/package-lock.json
+      - name: Install dependencies
+        working-directory: vscode
+        run: npm ci
+      - name: Test VS Code extension
+        working-directory: vscode
+        run: npm test
+      - name: Test Notepad++ adapter
+        working-directory: notepadpp
+        run: npm test
