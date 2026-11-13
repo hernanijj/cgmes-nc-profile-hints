@@ -20,6 +20,7 @@
 #include "../vendor/Scintilla.h"
 #include "../vendor/Notepad_plus_msgs.h"
 #include "../vendor/json.hpp"
+#include "../out/plugin-version.h"
 using json=nlohmann::json;
 struct NppData {HWND _nppHandle;HWND _scintillaMainHandle;HWND _scintillaSecondHandle;};
 struct ShortcutKey {bool ctrl,alt,shift;UCHAR key;};
@@ -358,13 +359,14 @@ static LRESULT CALLBACK wndproc(HWND h,UINT msg,WPARAM w,LPARAM l){
 }
 static void completeCmd(){request("complete");}static void hoverCmd(){hoverAt(SendMessage(editor(),SCI_GETCURRENTPOS,0,0));}static void outlineCmd(){request("outline");}static void defCmd(){promptIdentifier("findDefinitionById");}static void refsCmd(){promptIdentifier("findReferencesById");}
 static void issuesCmd(){visible={{"kind","issues"},{"items",json::array()}};showPane();request("validate");}static void profilesCmd(){request("profiles");}static void versionsCmd(){request("versions");}static void reloadCmd(){request("reload");}static void automaticCmd(){request("dataset",json::array());}static void validateDatasetCmd(){visible={{"kind","issues"},{"items",json::array()}};showPane();request("validateDataset");}
+static void aboutCmd(){MessageBoxW(npp._nppHandle,L"CGMES & NC Profile Hints for Notepad++\nVersion " CGMES_NOTEPAD_VERSION,L"About CGMES & NC Profile Hints",MB_OK|MB_ICONINFORMATION);}
 static void datasetCmd(){std::vector<wchar_t> names(65536);OPENFILENAME ofn{};ofn.lStructSize=sizeof(ofn);ofn.hwndOwner=npp._nppHandle;ofn.lpstrFilter=L"CIM/XML\0*.xml;*.rdf;*.cimxml\0All files\0*.*\0";ofn.lpstrFile=names.data();ofn.nMaxFile=(DWORD)names.size();ofn.Flags=OFN_ALLOWMULTISELECT|OFN_EXPLORER|OFN_FILEMUSTEXIST;if(GetOpenFileName(&ofn)){json files=json::array();std::wstring first=names.data();auto next=names.data()+first.size()+1;if(!*next)files.push_back(utf8(first));else while(*next){std::wstring name=next;files.push_back(utf8(first+L"\\"+name));next+=name.size()+1;}request("dataset",files);}}
 static void openDatasetCmd(){request("openDatasetSelection");}
 static void folderCmd(){BROWSEINFO bi{};bi.hwndOwner=npp._nppHandle;bi.lpszTitle=L"Choose a folder whose CIM files form the dataset";bi.ulFlags=BIF_RETURNONLYFSDIRS|BIF_NEWDIALOGSTYLE;auto id=SHBrowseForFolder(&bi);if(id){wchar_t p[MAX_PATH]{};if(SHGetPathFromIDList(id,p))request("datasetFolder",utf8(p));CoTaskMemFree(id);}}
 static void membersCmd(){request("datasetMembers");}
 static ShortcutKey completionKey{true,false,false,VK_SPACE};
 static FuncItem functions[]={
- {L"Complete CIM/XML",completeCmd,0,false,&completionKey},{L"Show hover information",hoverCmd},{L"Show issues",issuesCmd},{L"Object outline",outlineCmd},{L"Go to definition by mRID...",defCmd},{L"Find references by mRID...",refsCmd},{L"Select profile for this file",profilesCmd},{L"Select CIM version for this file",versionsCmd},{L"Choose dataset files...",datasetCmd},{L"Choose open files to validate together...",openDatasetCmd},{L"Dataset: automatic",automaticCmd},{L"Validate selected dataset",validateDatasetCmd},{L"Reload profiles and settings",reloadCmd},{L"Choose dataset folder...",folderCmd},{L"Show dataset files",membersCmd}};
+ {L"Complete CIM/XML",completeCmd,0,false,&completionKey},{L"Show hover information",hoverCmd},{L"Show issues",issuesCmd},{L"Object outline",outlineCmd},{L"Go to definition by mRID...",defCmd},{L"Find references by mRID...",refsCmd},{L"Select profile for this file",profilesCmd},{L"Select CIM version for this file",versionsCmd},{L"Choose dataset files...",datasetCmd},{L"Choose open files to validate together...",openDatasetCmd},{L"Dataset: automatic",automaticCmd},{L"Validate selected dataset",validateDatasetCmd},{L"Reload profiles and settings",reloadCmd},{L"Choose dataset folder...",folderCmd},{L"Show dataset files",membersCmd},{L"About CGMES & NC Profile Hints",aboutCmd}};
 extern "C" __declspec(dllexport) const wchar_t* getName(){return L"CGMES & NC Profile Hints";}
 extern "C" __declspec(dllexport) BOOL isUnicode(){return TRUE;}
 extern "C" __declspec(dllexport) FuncItem* getFuncsArray(int*n){*n=sizeof(functions)/sizeof(functions[0]);return functions;}

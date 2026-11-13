@@ -4,6 +4,11 @@ Push-Location $PSScriptRoot
 try {
   node scripts/build.cjs
   if ($LASTEXITCODE -ne 0) { throw 'Worker build failed' }
+  $package = Get-Content package.json -Raw | ConvertFrom-Json
+  if ($package.version -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$') { throw 'package.json must contain a valid plugin version.' }
+  New-Item -ItemType Directory -Force out | Out-Null
+  $versionHeader = '#define CGMES_NOTEPAD_VERSION L"{0}"' -f $package.version
+  [System.IO.File]::WriteAllText((Join-Path $PSScriptRoot 'out\plugin-version.h'), $versionHeader + [Environment]::NewLine, [System.Text.Encoding]::ASCII)
   if (-not (Test-Path -LiteralPath $Compiler)) { throw 'Supply -Compiler with the path to a MinGW-w64 g++.exe (x64).' }
   $env:PATH=(Split-Path $Compiler)+';'+$env:PATH
   & $Compiler -std=c++17 -O2 -shared -static -static-libgcc -static-libstdc++ -municode native/plugin.cpp -o dist/CGMESNotepad/CGMESNotepad.dll -lcomdlg32 -lcomctl32 -luser32 -lkernel32 -lshell32 -lole32 -lgdi32

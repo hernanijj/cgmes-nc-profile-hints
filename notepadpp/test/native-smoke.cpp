@@ -40,7 +40,7 @@ int main(){
  mainEditor=CreateWindow(wc.lpszClassName,L"",0,0,0,0,0,nullptr,nullptr,wc.hInstance,nullptr);secondEditor=CreateWindow(wc.lpszClassName,L"",0,0,0,0,0,nullptr,nullptr,wc.hInstance,nullptr);
  INITCOMMONCONTROLSEX ic{sizeof(ic),ICC_BAR_CLASSES};InitCommonControlsEx(&ic);HWND status=CreateWindow(STATUSCLASSNAME,L"",WS_CHILD,0,0,600,24,h,nullptr,wc.hInstance,nullptr);int parts[]={400,-1};SendMessage(status,SB_SETPARTS,2,(LPARAM)parts);
  set({h,mainEditor,secondEditor});int n=0;auto cmds=items(&n);auto has=[&](const wchar_t* label){for(int i=0;i<n;++i)if(lstrcmpW(cmds[i].name,label)==0)return true;return false;};
- if(n!=15||!has(L"Go to definition by mRID...")||!has(L"Find references by mRID...")||has(L"Quick fixes at cursor")||has(L"New CIM/XML document")||has(L"Edit settings (save then Reload)"))return 3;cmds[0].fn();
+ if(n!=16||!has(L"Go to definition by mRID...")||!has(L"Find references by mRID...")||!has(L"About CGMES & NC Profile Hints")||has(L"Quick fixes at cursor")||has(L"New CIM/XML document")||has(L"Edit settings (save then Reload)"))return 3;cmds[0].fn();
  DWORD until=GetTickCount()+15000;while(suggestions.empty()&&GetTickCount()<until){MSG msg;while(PeekMessage(&msg,nullptr,0,0,PM_REMOVE)){TranslateMessage(&msg);DispatchMessage(&msg);}Sleep(10);}
  int result=0;if(suggestions.empty()){std::cerr<<"No completion response";result=4;}else{
   std::string first=suggestions.substr(0,suggestions.find('\n'));SCNotification selection{};selection.nmhdr.code=SCN_AUTOCSELECTION;selection.nmhdr.hwndFrom=mainEditor;selection.text=first.c_str();notify(&selection);
