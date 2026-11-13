@@ -1,5 +1,6 @@
 **
 !dist/extension.js
+!images/logo.png
 !profiles/*.json
 !package.json
 !README.md
