@@ -7,7 +7,7 @@ A VS Code extension that guides you while writing CIM/XML (RDF/XML) instance fil
 official RDFS profile definitions and from the SHACL constraints (for CGMES 2.4.15, the ENTSO-E
 QoCDC "EnhancedAppLibRDFS24" shapes; for CGMES 3.0, the ENTSO-E Application Profiles Library shapes).
 
-For a concise introduction with examples, see `APRESENTACAO.md` in the project source.
+For a concise introduction with examples, see `PRESENTATION.md` in the project source.
 
 ## What it does
 
