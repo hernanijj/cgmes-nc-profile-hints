@@ -1,6 +1,6 @@
 {
   "name": "cgmes-cim-ncp-hints",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "icon": "images/logo.png",
   "galleryBanner": {
     "color": "#163A5F",
@@ -46,7 +46,7 @@
   "dependencies": {
     "n3": "^2.13.12"
   },
-  "displayName": "CGMES & CIM/XML Tools",
+  "displayName": "CGMES & NC Profile Hints",
   "publisher": "hernanijusto",
   "engines": {
     "vscode": "^1.85.0"
