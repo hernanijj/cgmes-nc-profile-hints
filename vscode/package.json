@@ -1,12 +1,12 @@
 {
   "name": "cgmes-cim-ncp-hints",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "icon": "images/logo.png",
   "galleryBanner": {
     "color": "#163A5F",
     "theme": "dark"
   },
-  "description": "Completions, hovers and validation for CIM/XML instance files following CGMES 2.4.15, CGMES 3.0 and ENTSO-E network code profiles (NCP) 2.2 and 2.5.",
+  "description": "CIM/XML editor support for CGMES and ENTSO-E network code profiles: completions, hovers, validation and cross-file checks.",
   "repository": {
     "type": "git",
     "url": "https://github.com/hernanijj/cgmes-nc-profile-hints.git"
@@ -22,10 +22,16 @@
   "keywords": [
     "CGMES",
     "CIM",
+    "CIM/XML",
+    "RDF/XML",
     "ENTSO-E",
-    "RDF",
     "network codes",
-    "IEC 61970"
+    "NCP",
+    "CIM validation",
+    "CGMES validation",
+    "CIM editor",
+    "IEC 61970",
+    "power systems"
   ],
   "author": "",
   "license": "MIT",
@@ -40,15 +46,14 @@
   "dependencies": {
     "n3": "^2.13.12"
   },
-  "displayName": "CGMES CIM & Network Code Assistant",
+  "displayName": "CGMES & CIM/XML Tools",
   "publisher": "hernanijusto",
   "engines": {
     "vscode": "^1.85.0"
   },
   "categories": [
     "Programming Languages",
-    "Linters",
-    "Snippets"
+    "Linters"
   ],
   "activationEvents": [
     "onLanguage:xml"

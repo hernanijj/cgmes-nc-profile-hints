@@ -1,9 +1,10 @@
 ![CGMES & NC Profile Hints logo](../logo.png)
 
-# CGMES & NC Profile Hints
+# CGMES & CIM/XML Tools
 
-A VS Code extension that guides you while writing CIM/XML (RDF/XML) instance files for
-**CGMES 2.4.15**, **CGMES 3.0** and the ENTSO-E **network code profiles (NCP) 2.2 and 2.5**. All hints come from the
+A VS Code extension for editing and validating CIM/XML (RDF/XML) instance files, with completions,
+hovers, diagnostics and cross-file checks for **CGMES 2.4.15**, **CGMES 3.0** and ENTSO-E
+**network code profiles (NCP) 2.2 and 2.5**. All hints come from the
 official RDFS profile definitions and from the SHACL constraints (for CGMES 2.4.15, the ENTSO-E
 QoCDC "EnhancedAppLibRDFS24" shapes; for CGMES 3.0, the ENTSO-E Application Profiles Library shapes).
 
